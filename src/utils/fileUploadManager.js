@@ -1,18 +1,17 @@
 export const FILE_MAPPINGS = {
   // Documentos da Empresa
-  contratoSocial: 'customfield_file0',
-  cnd: 'customfield_file1',
-  conselhoClasse: 'customfield_file2',
-  dadosBancarios: 'customfield_file3',
-  certificadoConselhoClasse: 'customfield_file4',
+  contratoSocial: 'customfield_file1',
+  dadosBancarios: 'customfield_file2',
+  certificadoConselhoClasse: 'customfield_file3',
   inscricaoMunicipal: 'customfield_file5',
+  cnd: 'customfield_file6',
   cartaoCnpj: 'customfield_file7',
   
   // Antecedentes Criminais dos Sócios
-  antecedentesS1: 'customfield_file4',
-  antecedentesS2: 'customfield_file10',
-  antecedentesS3: 'customfield_file9',
-  antecedentesS4: 'customfield_file8'
+  antecedentesS1: 'customfield_file4',  // Sócio 1
+  antecedentesS2: 'customfield_file10', // Sócio 2
+  antecedentesS3: 'customfield_file9',  // Sócio 3
+  antecedentesS4: 'customfield_file8'   // Sócio 4
 };
 
 export class FileUploadManager {

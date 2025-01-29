@@ -152,12 +152,16 @@ export default {
         customfield_shorttext36: "", // País Sócio 4
 
         // Documentos
-        customfield_file0: "", // Contrato Social
-        customfield_file1: "", // CND
-        customfield_file2: "", // Conselho de Classe
-        customfield_file3: "", // Dados Bancários
-        customfield_file4: "", // Certificado Conselho de Classe
-        customfield_file5: "", // Inscrição Municipal
+        customfield_file1: "", // Contrato Social
+        customfield_file2: "", // Dados Bancarios
+        customfield_file3: "", // Certificado Conselho de Classe
+        customfield_file4: "", // Atestado de Antecedentes Criminais Socio 1
+        customfield_file5: "", // Inscricao Municipal
+        customfield_file6: "", // CND
+        customfield_file7: "", // Cartao CNPJ
+        customfield_file8: "", // Atestado de Antecedentes Criminais Socio 4
+        customfield_file9: "", // Atestado de Antecedentes Criminais Socio 3
+        customfield_file10: "", // Atestado de Antecedentes Criminais Socio 2
       },
       errorMessage: "",
       successMessage: "",
@@ -239,38 +243,47 @@ export default {
       try {
         const formData = new FormData();
 
-        // Adiciona campos básicos obrigatórios
-        formData.append("title", this.formData.title || "");
-        formData.append("priority", this.formData.priority || "");
-        formData.append("description", this.formData.description || "");
+        // Campos básicos obrigatórios
+        formData.append("title", "teste1111");
+        formData.append("priority", "33662000000000289");
+        formData.append("description", "teste");
         formData.append("layout_id", "33662000000053045");
 
-        // Adiciona campos de texto (exceto arquivos)
+        // Campos de texto do formulário
         Object.entries(this.formData).forEach(([key, value]) => {
-          if (value && !(value instanceof File) && !["title", "priority", "description", "layout_id"].includes(key)) {
-            formData.append(key, String(value));
+          if (value && typeof value === "string" && !["title", "priority", "description", "layout_id"].includes(key)) {
+            formData.append(key, value);
           }
         });
 
-        // Adiciona arquivos do fileUploadManager
+        // Adiciona os arquivos de forma simplificada
         const files = fileUploadManager.getAllFiles();
         Object.entries(files).forEach(([key, file]) => {
-          if (file instanceof File) {
-            // Importante: Use o nome do arquivo como terceiro parâmetro
-            formData.append(key, file, file.name);
-          }
+          // Importante: Não usar o terceiro parâmetro no append
+          formData.append(key, file);
         });
 
-        const response = await api.post("/cards", formData);
+        // Log para debug
+        console.log("=== Arquivos sendo enviados ===");
+        for (let [key, value] of formData.entries()) {
+          if (value instanceof File) {
+            console.log(`${key}: ${value.name} (${value.size} bytes)`);
+          }
+        }
+
+        const response = await api.post("/cards", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
 
         if (response.status === 201 || response.status === 200) {
           this.successMessage = "Formulário enviado com sucesso!";
-        } else {
-          throw new Error(`Erro ${response.status}: ${response.data.message || "Erro desconhecido"}`);
+          fileUploadManager.clear(); // Limpa os arquivos após sucesso
         }
       } catch (error) {
         console.error("Erro ao enviar formulário:", error);
-        this.errorMessage = error.response?.data?.message || error.message || "Erro ao enviar formulário";
+        this.errorMessage = error.message;
       } finally {
         this.isSubmitting = false;
       }

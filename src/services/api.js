@@ -2,9 +2,9 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: 'https://qntrl-api.vercel.app/api',
-  timeout: 10000,
+  timeout: 5000,
   headers: {
-    'Content-Type': 'multipart/form-data',
+    'Content-Type': 'application/json',
   }
 });
 

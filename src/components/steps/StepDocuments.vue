@@ -110,7 +110,7 @@ export default {
     return {
       localData: {
         customfield_file1: null,  // Contrato Social
-        customfield_file2: null,  // Dados Bancarios 
+        customfield_file2: null,  // Dados Bancarios
         customfield_file3: null,  // Certificado Conselho de Classe
         customfield_file4: null,  // Atestado de Antecedentes Criminais Socio 1
         customfield_file5: null,  // Inscricao Municipal
@@ -156,12 +156,16 @@ export default {
     // Inicializa com os valores do formData se existirem
     if (this.formData) {
       this.localData = {
-        customfield_file0: this.formData.customfield_file0 || null,
         customfield_file1: this.formData.customfield_file1 || null,
         customfield_file2: this.formData.customfield_file2 || null,
         customfield_file3: this.formData.customfield_file3 || null,
         customfield_file4: this.formData.customfield_file4 || null,
-        customfield_file5: this.formData.customfield_file5 || null
+        customfield_file5: this.formData.customfield_file5 || null,
+        customfield_file6: this.formData.customfield_file6 || null,
+        customfield_file7: this.formData.customfield_file7 || null,
+        customfield_file8: this.formData.customfield_file8 || null,
+        customfield_file9: this.formData.customfield_file9 || null,
+        customfield_file10: this.formData.customfield_file10 || null
       };
     }
   }
