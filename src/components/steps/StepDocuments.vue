@@ -1,90 +1,167 @@
 <template>
   <div>
-    <h2 class="text-xl font-bold mb-4">Documentos</h2>
-    <form @submit.prevent="handleNext">
+    <h2 class="text-2xl font-bold mb-10 bg-gradient-to-r from-[#991B1B] to-[#7F1D1D] bg-clip-text text-transparent">
+      Documentos
+    </h2>
+    <form @submit.prevent="handleNext" class="space-y-4">
       <!-- Contrato Social -->
       <div class="mb-4">
-        <label class="block mb-2">
+        <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
           Contrato Social:
-          <input
-            type="file"
-            @change="(e) => handleFileUpload('contratoSocial', e)"
-            class="w-full border p-2 rounded"
-          />
-        </label>
-      </div>
-
-      <!-- CND -->
-      <div class="mb-4">
-        <label class="block mb-2">
-          CND:
-          <input
-            type="file"
-            @change="(e) => handleFileUpload('cnd', e)"
-            class="w-full border p-2 rounded"
-          />
-        </label>
-      </div>
-
-      <!-- Conselho de Classe -->
-      <div class="mb-4">
-        <label class="block mb-2">
-          Conselho de Classe:
-          <input
-            type="file"
-            @change="(e) => handleFileUpload('conselhoClasse', e)"
-            class="w-full border p-2 rounded"
-          />
+          <div class="mt-2">
+            <input
+              type="file"
+              @change="(e) => handleFileUpload('contratoSocial', e)"
+              class="hidden"
+              ref="fileInput1"
+              accept=".pdf"
+            />
+            <button 
+              type="button"
+              @click="$refs.fileInput1.click()"
+              class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 text-gray-700 hover:bg-white hover:border-[#991B1B] hover:text-[#991B1B] transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer font-inter group"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+              <span>Escolher arquivo PDF</span>
+            </button>
+          </div>
         </label>
       </div>
 
       <!-- Dados Bancários -->
       <div class="mb-4">
-        <label class="block mb-2">
+        <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
           Dados Bancários:
-          <input
-            type="file"
-            @change="(e) => handleFileUpload('dadosBancarios', e)"
-            class="w-full border p-2 rounded"
-          />
+          <div class="mt-2">
+            <input
+              type="file"
+              @change="(e) => handleFileUpload('dadosBancarios', e)"
+              class="hidden"
+              ref="fileInput2"
+              accept=".pdf"
+            />
+            <button 
+              type="button"
+              @click="$refs.fileInput2.click()"
+              class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 text-gray-700 hover:bg-white hover:border-[#991B1B] hover:text-[#991B1B] transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer font-inter group"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+              <span>Escolher arquivo PDF</span>
+            </button>
+          </div>
         </label>
       </div>
 
-      <!-- Certificado Conselho de Classe -->
+      <!-- Certificado do Conselho de Classe -->
       <div class="mb-4">
-        <label class="block mb-2">
-          Certificado Conselho de Classe:
-          <input
-            type="file"
-            @change="(e) => handleFileUpload('certificadoConselhoClasse', e)"
-            class="w-full border p-2 rounded"
-          />
+        <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
+          Certificado do Conselho de Classe:
+          <div class="mt-2">
+            <input
+              type="file"
+              @change="(e) => handleFileUpload('certificadoConselhoClasse', e)"
+              class="hidden"
+              ref="fileInput3"
+              accept=".pdf"
+            />
+            <button 
+              type="button"
+              @click="$refs.fileInput3.click()"
+              class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 text-gray-700 hover:bg-white hover:border-[#991B1B] hover:text-[#991B1B] transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer font-inter group"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+              <span>Escolher arquivo PDF</span>
+            </button>
+          </div>
         </label>
       </div>
 
       <!-- Inscrição Municipal -->
       <div class="mb-4">
-        <label class="block mb-2">
+        <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
           Inscrição Municipal:
-          <input
-            type="file"
-            @change="(e) => handleFileUpload('inscricaoMunicipal', e)"
-            class="w-full border p-2 rounded"
-          />
+          <div class="mt-2">
+            <input
+              type="file"
+              @change="(e) => handleFileUpload('inscricaoMunicipal', e)"
+              class="hidden"
+              ref="fileInput4"
+              accept=".pdf"
+            />
+            <button 
+              type="button"
+              @click="$refs.fileInput4.click()"
+              class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 text-gray-700 hover:bg-white hover:border-[#991B1B] hover:text-[#991B1B] transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer font-inter group"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+              <span>Escolher arquivo PDF</span>
+            </button>
+          </div>
         </label>
       </div>
 
-      <div class="flex justify-between mt-4">
+      <!-- CND -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
+          CND:
+          <div class="mt-2">
+            <input
+              type="file"
+              @change="(e) => handleFileUpload('cnd', e)"
+              class="hidden"
+              ref="fileInput5"
+              accept=".pdf"
+            />
+            <button 
+              type="button"
+              @click="$refs.fileInput5.click()"
+              class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 text-gray-700 hover:bg-white hover:border-[#991B1B] hover:text-[#991B1B] transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer font-inter group"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+              <span>Escolher arquivo PDF</span>
+            </button>
+          </div>
+        </label>
+      </div>
+
+      <!-- Tipo de Conselho -->
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
+        Tipo de Conselho:
+        <select 
+          v-model="localData.tipoConselho"
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
+        >
+          <option value="">Selecione um conselho</option>
+          <option value="ANEPS">ANEPS</option>
+          <option value="FEBRABAN">FEBRABAN</option>
+          <option value="CRECI">CRECI</option>
+          <option value="SUSEP">SUSEP</option>
+          <option value="CORE">CORE</option>
+        </select>
+      </label>
+
+      <!-- Botões -->
+      <div class="flex justify-between pt-4">
         <button 
           type="button" 
-          class="bg-gray-300 px-4 py-2 rounded"
+          class="bg-gray-100 text-gray-700 hover:bg-gray-200 px-8 py-2.5 rounded-xl font-medium transition-all duration-300 font-inter hover:shadow-lg"
           @click="$emit('prev')"
         >
           Voltar
         </button>
         <button 
           type="submit" 
-          class="bg-blue-500 text-white px-4 py-2 rounded"
+          class="bg-gradient-to-r from-[#991B1B] to-[#7F1D1D] text-white px-8 py-2.5 rounded-xl font-medium transition-all duration-300 font-inter hover:shadow-lg hover:scale-105"
         >
           Próximo
         </button>

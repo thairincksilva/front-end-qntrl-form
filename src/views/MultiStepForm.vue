@@ -244,9 +244,9 @@ export default {
         const formData = new FormData();
 
         // Campos básicos obrigatórios
-        formData.append("title", "teste1111");
+        formData.append("title", this.formData.title || "");
         formData.append("priority", "33662000000000289");
-        formData.append("description", "teste");
+        formData.append("description", this.formData.description || "");
         formData.append("layout_id", "33662000000053045");
 
         // Campos de texto do formulário

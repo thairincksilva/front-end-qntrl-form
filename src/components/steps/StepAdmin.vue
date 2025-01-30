@@ -1,181 +1,199 @@
 <template>
   <div>
-    <h2 class="text-xl font-bold mb-4">
+    <h2 class="text-2xl font-bold mb-10 bg-gradient-to-r from-[#991B1B] to-[#7F1D1D] bg-clip-text text-transparent">
       Dados do Sócio {{ index + 1 }}
     </h2>
-    <form @submit.prevent="handleNext">
+    <form @submit.prevent="handleNext" class="space-y-4">
       <!-- Nome Completo -->
-      <label class="block mb-2">
-        Nome Completo:
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
+        Nome Completo - Sócio {{ index + 1 }}:
         <input
           type="text"
           v-model="localData.nome"
-          class="w-full border p-2 rounded"
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
           required
-          placeholder="Digite o nome completo"
+          :placeholder="`Digite o nome do Sócio ${index + 1}`"
         />
       </label>
 
       <!-- Email -->
-      <label class="block mb-2">
-        Email:
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
+        Email - Sócio {{ index + 1 }}:
         <input
           type="email"
           v-model="localData.email"
-          class="w-full border p-2 rounded"
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
           required
-          placeholder="Digite o email"
+          :placeholder="`Digite o email do Sócio ${index + 1}`"
         />
       </label>
 
       <!-- CPF -->
-      <label class="block mb-2">
-        CPF:
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
+        CPF - Sócio {{ index + 1 }}:
         <input
           v-mask="'XXX.XXX.XXX-XX'"
           type="text"
           v-model="localData.cpf"
-          class="w-full border p-2 rounded"
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
           required
-          placeholder="Digite o CPF"
+          :placeholder="`Digite o CPF do Sócio ${index + 1}`"
         />
       </label>
 
       <!-- Data de Nascimento -->
-      <label class="block mb-2">
-        Data de Nascimento:
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
+        Data de Nascimento - Sócio {{ index + 1 }}:
         <input
           type="text"
           ref="birthDatePicker"
           v-model="localData.dataNascimento"
-          class="w-full border p-2 rounded"
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
           required
           placeholder="Selecione a data"
         />
       </label>
 
       <!-- Telefone -->
-      <label class="block mb-2">
-        Telefone:
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
+        Telefone - Sócio {{ index + 1 }}:
         <input
           v-mask="'(XX) XXXXXXXXX'"
           type="tel"
           v-model="localData.telefone"
-          class="w-full border p-2 rounded"
-          placeholder="Digite o telefone"
-        />
-      </label>
-
-      <!-- Atestado de Antecedentes Criminais -->
-      <label class="block mb-4">
-        Atestado de Antecedentes Criminais:
-        <input
-          type="file"
-          @change="handleFileUpload"
-          class="w-full border p-2 rounded"
-          accept=".pdf,.doc,.docx"
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
+          :placeholder="`Digite o telefone do Sócio ${index + 1}`"
         />
       </label>
 
       <!-- CEP -->
-      <label class="block mb-2">
-        CEP:
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
+        CEP - Sócio {{ index + 1 }}:
         <input
           v-mask="'XXXXX-XXX'"
           type="text"
           v-model="localData.cep"
-          class="w-full border p-2 rounded"
-          placeholder="Digite o CEP"
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
+          :placeholder="`Digite o CEP do Sócio ${index + 1}`"
         />
       </label>
 
       <!-- Endereço -->
-      <label class="block mb-2">
-        Endereço:
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
+        Endereço - Sócio {{ index + 1 }}:
         <input
           type="text"
           v-model="localData.endereco"
-          class="w-full border p-2 rounded"
-          placeholder="Digite o endereço"
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
+          :placeholder="`Digite o endereço do Sócio ${index + 1}`"
         />
       </label>
 
       <!-- Número -->
-      <label class="block mb-2">
-        Número:
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
+        Número - Sócio {{ index + 1 }}:
         <input
           type="text"
           v-model="localData.numero"
-          class="w-full border p-2 rounded"
-          placeholder="Digite o número"
-        />
-      </label>
-
-      <!-- Bairro -->
-      <label class="block mb-2">
-        Bairro:
-        <input
-          type="text"
-          v-model="localData.bairro"
-          class="w-full border p-2 rounded"
-          placeholder="Digite o bairro"
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
+          :placeholder="`Digite o número do Sócio ${index + 1}`"
         />
       </label>
 
       <!-- Complemento -->
-      <label class="block mb-2">
-        Complemento:
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
+        Complemento - Sócio {{ index + 1 }}:
         <input
           type="text"
           v-model="localData.complemento"
-          class="w-full border p-2 rounded"
-          placeholder="Digite o complemento"
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
+          :placeholder="`Digite o complemento do Sócio ${index + 1}`"
+        />
+      </label>
+
+      <!-- Bairro -->
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
+        Bairro - Sócio {{ index + 1 }}:
+        <input
+          type="text"
+          v-model="localData.bairro"
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
+          :placeholder="`Digite o bairro do Sócio ${index + 1}`"
         />
       </label>
 
       <!-- Cidade -->
-      <label class="block mb-2">
-        Cidade:
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
+        Cidade - Sócio {{ index + 1 }}:
         <input
           type="text"
           v-model="localData.cidade"
-          class="w-full border p-2 rounded"
-          placeholder="Digite a cidade"
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
+          :placeholder="`Digite a cidade do Sócio ${index + 1}`"
         />
       </label>
 
       <!-- UF -->
-      <label class="block mb-2">
-        UF:
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
+        UF - Sócio {{ index + 1 }}:
         <input
           type="text"
           v-model="localData.uf"
-          class="w-full border p-2 rounded"
-          placeholder="Digite a UF"
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
+          :placeholder="`Digite a UF do Sócio ${index + 1}`"
         />
       </label>
 
       <!-- País -->
-      <label class="block mb-4">
-        País:
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
+        País - Sócio {{ index + 1 }}:
         <input
           type="text"
           v-model="localData.pais"
-          class="w-full border p-2 rounded"
-          placeholder="Digite o país"
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
+          :placeholder="`Digite o país do Sócio ${index + 1}`"
         />
       </label>
 
+      <!-- Atestado de Antecedentes Criminais -->
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
+        Atestado de Antecedentes Criminais - Sócio {{ index + 1 }}:
+        <div class="mt-2">
+          <input
+            type="file"
+            :id="`antecedentes-socio-${index + 1}`"
+            :name="`customfield_file${index === 0 ? '4' : index === 1 ? '10' : index === 2 ? '9' : '8'}`"
+            accept=".pdf"
+            class="hidden"
+            @change="handleFileUpload"
+            ref="fileInput"
+          />
+          <button 
+            type="button"
+            @click="$refs.fileInput.click()"
+            class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 text-gray-700 hover:bg-white hover:border-[#991B1B] hover:text-[#991B1B] transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer font-inter group"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+            </svg>
+            <span>Escolher arquivo PDF</span>
+          </button>
+        </div>
+      </label>
+
       <!-- Botões -->
-      <div class="flex justify-between">
-        <button
-          type="button"
-          class="bg-gray-300 px-4 py-2 rounded"
+      <div class="flex justify-between pt-4">
+        <button 
+          type="button" 
+          class="bg-gray-100 text-gray-700 hover:bg-gray-200 px-8 py-2.5 rounded-xl font-medium transition-all duration-300 font-inter hover:shadow-lg"
           @click="$emit('prev')"
         >
           Voltar
         </button>
-        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
+        <button 
+          type="submit" 
+          class="bg-gradient-to-r from-[#991B1B] to-[#7F1D1D] text-white px-8 py-2.5 rounded-xl font-medium transition-all duration-300 font-inter hover:shadow-lg hover:scale-105"
+        >
           Próximo
         </button>
       </div>

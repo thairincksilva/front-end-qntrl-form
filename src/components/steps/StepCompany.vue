@@ -1,191 +1,211 @@
 <template>
   <div>
-    <h2 class="text-xl font-bold mb-4">Dados da Empresa</h2>
-    <form @submit.prevent="handleNext">
+    <h2 class="text-2xl font-bold mb-10 bg-gradient-to-r from-[#991B1B] to-[#7F1D1D] bg-clip-text text-transparent">Dados da Empresa</h2>
+    <form @submit.prevent="handleNext" class="space-y-6">
       <!-- CNPJ -->
-      <label class="block mb-2">
+      <label class="block text-sm font-medium text-gray-700 mb-6 font-inter">
         CNPJ:
         <input
           v-mask="'XX.XXX.XXX/XXXX-XX'"
           type="text"
           v-model="localData.cnpj"
-          class="w-full border p-2 rounded"
+          class="w-full px-4 py-3 rounded-[0.75rem] border-gray-300 bg-white shadow-sm hover:border-gray-400 focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 focus:ring-opacity-50 transition-all duration-200 font-inter placeholder-gray-400"
           required
           placeholder="Digite o CNPJ"
         />
       </label>
 
+      <!-- Cartão CNPJ -->
+      <div class="relative block w-full mb-6">
+        <label class="block text-sm font-medium text-gray-700 mb-6 font-inter">
+          Cartão CNPJ:
+          <input
+            type="file"
+            @change="handleFileUpload"
+            class="hidden"
+            ref="fileInput"
+            accept=".pdf"
+          />
+          <button 
+            type="button"
+            @click="$refs.fileInput.click()"
+            class="w-full px-4 py-3 rounded-[0.75rem] border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer font-inter"
+          >
+            <span>Escolher arquivo PDF</span>
+          </button>
+        </label>
+      </div>
+
       <!-- Razão Social -->
-      <label class="block mb-2">
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
         Razão Social:
         <input 
           type="text" 
           v-model="localData.razaoSocial" 
-          class="w-full border p-2 rounded" 
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
           required 
           placeholder="Digite a razão social" 
         />
       </label>
 
       <!-- Nome Fantasia -->
-      <label class="block mb-2">
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
         Nome Fantasia:
         <input 
           type="text" 
           v-model="localData.nomeFantasia" 
-          class="w-full border p-2 rounded" 
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
           placeholder="Digite o nome fantasia" 
         />
       </label>
 
       <!-- Email -->
-      <label class="block mb-2">
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
         Email:
         <input 
           type="email" 
           v-model="localData.email" 
-          class="w-full border p-2 rounded" 
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
           placeholder="Digite o email" 
         />
       </label>
 
       <!-- Atividade Principal -->
-      <label class="block mb-2">
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
         Atividade Principal:
         <input 
           type="text" 
           v-model="localData.atividadePrincipal" 
-          class="w-full border p-2 rounded" 
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
           placeholder="Digite a atividade principal" 
         />
       </label>
 
       <!-- Telefone -->
-      <label class="block mb-2">
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
         Telefone:
         <input 
           v-mask="'(XX) XXXXXXXXX'" 
           type="tel" 
           v-model="localData.telefone" 
-          class="w-full border p-2 rounded" 
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
           placeholder="Digite o telefone" 
         />
       </label>
 
       <!-- Data de Abertura -->
-      <label class="block mb-2">
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
         Data de Abertura:
-        <input 
-          type="text" 
-          ref="openingDatePicker" 
+        <input
+          type="text"
+          ref="openingDatePicker"
           v-model="localData.dataAbertura"
-          class="w-full border p-2 rounded" 
-          placeholder="Selecione a data" 
-          required 
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
+          placeholder="Selecione a data"
         />
       </label>
 
       <!-- CEP -->
-      <label class="block mb-2">
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
         CEP:
         <input 
           v-mask="'XXXXX-XXX'" 
           type="text" 
           v-model="localData.cep" 
-          class="w-full border p-2 rounded" 
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
           placeholder="Digite o CEP" 
         />
       </label>
 
       <!-- Endereço -->
-      <label class="block mb-2">
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
         Endereço:
         <input 
           type="text" 
           v-model="localData.endereco" 
-          class="w-full border p-2 rounded" 
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
           placeholder="Digite o endereço" 
         />
       </label>
 
       <!-- Número -->
-      <label class="block mb-2">
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
         Número:
         <input 
           type="text" 
           v-model="localData.numero" 
-          class="w-full border p-2 rounded" 
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
           placeholder="Digite o número" 
         />
       </label>
 
       <!-- Complemento -->
-      <label class="block mb-2">
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
         Complemento:
         <input 
           type="text" 
           v-model="localData.complemento" 
-          class="w-full border p-2 rounded" 
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
           placeholder="Digite o complemento" 
         />
       </label>
 
       <!-- Bairro -->
-      <label class="block mb-2">
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
         Bairro:
         <input 
           type="text" 
           v-model="localData.bairro" 
-          class="w-full border p-2 rounded" 
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
           placeholder="Digite o bairro" 
         />
       </label>
 
       <!-- Cidade -->
-      <label class="block mb-2">
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
         Cidade:
         <input 
           type="text" 
           v-model="localData.cidade" 
-          class="w-full border p-2 rounded" 
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
           placeholder="Digite a cidade" 
         />
       </label>
 
       <!-- UF -->
-      <label class="block mb-2">
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
         UF:
         <input 
           type="text" 
           v-model="localData.uf" 
-          class="w-full border p-2 rounded" 
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
           placeholder="Digite a UF" 
         />
       </label>
 
       <!-- País -->
-      <label class="block mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
         País:
         <input 
           type="text" 
           v-model="localData.pais" 
-          class="w-full border p-2 rounded" 
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
           placeholder="Digite o país" 
         />
       </label>
 
       <!-- Botões -->
-      <div class="flex justify-between">
+      <div class="flex justify-between pt-4">
         <button 
           type="button" 
-          class="bg-gray-300 px-4 py-2 rounded" 
+          class="bg-gray-100 text-gray-700 hover:bg-gray-200 px-8 py-2.5 rounded-xl font-medium transition-all duration-300 font-inter hover:shadow-lg"
           @click="$emit('prev')"
         >
           Voltar
         </button>
         <button 
           type="submit" 
-          class="bg-blue-500 text-white px-4 py-2 rounded"
+          class="bg-gradient-to-r from-[#991B1B] to-[#7F1D1D] text-white px-8 py-2.5 rounded-xl font-medium transition-all duration-300 font-inter hover:shadow-lg hover:scale-105"
         >
           Próximo
         </button>
