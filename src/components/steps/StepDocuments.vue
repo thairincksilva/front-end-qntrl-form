@@ -137,16 +137,15 @@
       <!-- Tipo de Conselho -->
       <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
         Tipo de Conselho:
-        <select 
+        <select
           v-model="localData.tipoConselho"
-          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter"
+          required
         >
           <option value="">Selecione um conselho</option>
-          <option value="ANEPS">ANEPS</option>
-          <option value="FEBRABAN">FEBRABAN</option>
-          <option value="CRECI">CRECI</option>
-          <option value="SUSEP">SUSEP</option>
-          <option value="CORE">CORE</option>
+          <option v-for="(value, key) in conselhoOptions" :key="value" :value="value">
+            {{ key }}
+          </option>
         </select>
       </label>
 
@@ -185,17 +184,17 @@ export default {
   },
   data() {
     return {
+      conselhoOptions: {
+        'ANEPS': '33662000000053199',
+        'FEBRABAN': '33662000000053201',
+        'CRECI': '33662000000053203',
+        'SUSEP': '33662000000053205',
+        'CORE': '33662000000053207'
+      },
       localData: {
-        customfield_file1: null,  // Contrato Social
-        customfield_file2: null,  // Dados Bancarios
-        customfield_file3: null,  // Certificado Conselho de Classe
-        customfield_file4: null,  // Atestado de Antecedentes Criminais Socio 1
-        customfield_file5: null,  // Inscricao Municipal
-        customfield_file6: null,  // CND
-        customfield_file7: null,  // Cartao CNPJ
-        customfield_file8: null,  // Atestado de Antecedentes Criminais Socio 4
-        customfield_file9: null,  // Atestado de Antecedentes Criminais Socio 3
-        customfield_file10: null  // Atestado de Antecedentes Criminais Socio 2
+        tipoConselho: '',
+        inscricaoMunicipal: null,
+        cnd: null
       }
     }
   },
@@ -217,16 +216,16 @@ export default {
         }
       }
     },
+    mapFields(data) {
+      return {
+        customfield_dropdown1: data.tipoConselho || '',      // Tipo de Conselho
+        customfield_file5: data.inscricaoMunicipal || null, // Inscrição Municipal
+        customfield_file6: data.cnd || null                 // CND
+      };
+    },
     handleNext() {
-      console.log('Dados dos documentos antes do envio:', 
-        Object.entries(this.localData)
-          .filter(([_, value]) => value instanceof File)
-          .map(([key, file]) => ({
-            campo: key,
-            arquivo: file.name
-          }))
-      );
-      this.$emit('next', this.localData);
+      const mappedData = this.mapFields(this.localData);
+      this.$emit('next', mappedData);
     }
   },
   created() {
@@ -242,7 +241,10 @@ export default {
         customfield_file7: this.formData.customfield_file7 || null,
         customfield_file8: this.formData.customfield_file8 || null,
         customfield_file9: this.formData.customfield_file9 || null,
-        customfield_file10: this.formData.customfield_file10 || null
+        customfield_file10: this.formData.customfield_file10 || null,
+        tipoConselho: this.formData.customfield_dropdown1 || '',
+        inscricaoMunicipal: this.formData.customfield_file5 || null,
+        cnd: this.formData.customfield_file6 || null
       };
     }
   }

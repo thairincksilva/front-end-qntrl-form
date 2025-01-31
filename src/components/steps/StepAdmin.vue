@@ -1,49 +1,49 @@
 <template>
   <div>
     <h2 class="text-2xl font-bold mb-10 bg-gradient-to-r from-[#991B1B] to-[#7F1D1D] bg-clip-text text-transparent">
-      Dados do Sócio {{ index + 1 }}
+      Dados do Sócio {{ displayNumber }}
     </h2>
     <form @submit.prevent="handleNext" class="space-y-4">
       <!-- Nome Completo -->
       <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
-        Nome Completo - Sócio {{ index + 1 }}:
+        Nome Completo - Sócio {{ displayNumber }}:
         <input
           type="text"
           v-model="localData.nome"
           class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
           required
-          :placeholder="`Digite o nome do Sócio ${index + 1}`"
+          :placeholder="`Digite o nome do Sócio ${displayNumber}`"
         />
       </label>
 
       <!-- Email -->
       <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
-        Email - Sócio {{ index + 1 }}:
+        Email - Sócio {{ displayNumber }}:
         <input
           type="email"
           v-model="localData.email"
           class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
           required
-          :placeholder="`Digite o email do Sócio ${index + 1}`"
+          :placeholder="`Digite o email do Sócio ${displayNumber}`"
         />
       </label>
 
       <!-- CPF -->
       <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
-        CPF - Sócio {{ index + 1 }}:
+        CPF - Sócio {{ displayNumber }}:
         <input
           v-mask="'XXX.XXX.XXX-XX'"
           type="text"
           v-model="localData.cpf"
           class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
           required
-          :placeholder="`Digite o CPF do Sócio ${index + 1}`"
+          :placeholder="`Digite o CPF do Sócio ${displayNumber}`"
         />
       </label>
 
       <!-- Data de Nascimento -->
       <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
-        Data de Nascimento - Sócio {{ index + 1 }}:
+        Data de Nascimento - Sócio {{ displayNumber }}:
         <input
           type="text"
           ref="birthDatePicker"
@@ -56,113 +56,113 @@
 
       <!-- Telefone -->
       <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
-        Telefone - Sócio {{ index + 1 }}:
+        Telefone - Sócio {{ displayNumber }}:
         <input
           v-mask="'(XX) XXXXXXXXX'"
           type="tel"
           v-model="localData.telefone"
           class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-          :placeholder="`Digite o telefone do Sócio ${index + 1}`"
+          :placeholder="`Digite o telefone do Sócio ${displayNumber}`"
         />
       </label>
 
       <!-- CEP -->
       <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
-        CEP - Sócio {{ index + 1 }}:
+        CEP - Sócio {{ displayNumber }}:
         <input
           v-mask="'XXXXX-XXX'"
           type="text"
           v-model="localData.cep"
           class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-          :placeholder="`Digite o CEP do Sócio ${index + 1}`"
+          :placeholder="`Digite o CEP do Sócio ${displayNumber}`"
         />
       </label>
 
       <!-- Endereço -->
       <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
-        Endereço - Sócio {{ index + 1 }}:
+        Endereço - Sócio {{ displayNumber }}:
         <input
           type="text"
           v-model="localData.endereco"
           class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-          :placeholder="`Digite o endereço do Sócio ${index + 1}`"
+          :placeholder="`Digite o endereço do Sócio ${displayNumber}`"
         />
       </label>
 
       <!-- Número -->
       <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
-        Número - Sócio {{ index + 1 }}:
+        Número - Sócio {{ displayNumber }}:
         <input
           type="text"
           v-model="localData.numero"
           class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-          :placeholder="`Digite o número do Sócio ${index + 1}`"
+          :placeholder="`Digite o número do Sócio ${displayNumber}`"
         />
       </label>
 
       <!-- Complemento -->
       <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
-        Complemento - Sócio {{ index + 1 }}:
+        Complemento - Sócio {{ displayNumber }}:
         <input
           type="text"
           v-model="localData.complemento"
           class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-          :placeholder="`Digite o complemento do Sócio ${index + 1}`"
+          :placeholder="`Digite o complemento do Sócio ${displayNumber}`"
         />
       </label>
 
       <!-- Bairro -->
       <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
-        Bairro - Sócio {{ index + 1 }}:
+        Bairro - Sócio {{ displayNumber }}:
         <input
           type="text"
           v-model="localData.bairro"
           class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-          :placeholder="`Digite o bairro do Sócio ${index + 1}`"
+          :placeholder="`Digite o bairro do Sócio ${displayNumber}`"
         />
       </label>
 
       <!-- Cidade -->
       <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
-        Cidade - Sócio {{ index + 1 }}:
+        Cidade - Sócio {{ displayNumber }}:
         <input
           type="text"
           v-model="localData.cidade"
           class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-          :placeholder="`Digite a cidade do Sócio ${index + 1}`"
+          :placeholder="`Digite a cidade do Sócio ${displayNumber}`"
         />
       </label>
 
       <!-- UF -->
       <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
-        UF - Sócio {{ index + 1 }}:
+        UF - Sócio {{ displayNumber }}:
         <input
           type="text"
           v-model="localData.uf"
           class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-          :placeholder="`Digite a UF do Sócio ${index + 1}`"
+          :placeholder="`Digite a UF do Sócio ${displayNumber}`"
         />
       </label>
 
       <!-- País -->
       <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
-        País - Sócio {{ index + 1 }}:
+        País - Sócio {{ displayNumber }}:
         <input
           type="text"
           v-model="localData.pais"
           class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-          :placeholder="`Digite o país do Sócio ${index + 1}`"
+          :placeholder="`Digite o país do Sócio ${displayNumber}`"
         />
       </label>
 
       <!-- Atestado de Antecedentes Criminais -->
       <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
-        Atestado de Antecedentes Criminais - Sócio {{ index + 1 }}:
+        Atestado de Antecedentes Criminais - Sócio {{ displayNumber }}:
         <div class="mt-2">
           <input
             type="file"
-            :id="`antecedentes-socio-${index + 1}`"
-            :name="`customfield_file${index === 0 ? '4' : index === 1 ? '10' : index === 2 ? '9' : '8'}`"
+            :id="`antecedentes-socio-${displayNumber}`"
+            :name="`customfield_file${displayNumber === 1 ? '4' : displayNumber === 2 ? '9' : displayNumber === 3 ? '10' : '8'}`"
             accept=".pdf"
             class="hidden"
             @change="handleFileUpload"
@@ -209,95 +209,85 @@ import { FILE_MAPPINGS } from "../../utils/fileUploadManager";
 import { fileUploadManager } from "../../utils/fileUploadManager";
 
 export default {
+  name: 'StepAdmin',
   props: {
     formData: {
       type: Object,
       required: true
     },
+    hasFirstPartner: {
+      type: Boolean,
+      required: true
+    },
     index: {
       type: Number,
       required: true
+    },
+    cachedData: {
+      type: Object,
+      default: () => ({})
     }
   },
   data() {
     return {
-      localData: this.initializeLocalData()
+      localData: this.initializeData()
     }
   },
+  computed: {
+    displayNumber() {
+      // Se tem sócio solicitante (hasFirstPartner), 
+      // o número de exibição será o índice atual
+      // Não soma mais 1 ao índice
+      return this.hasFirstPartner ? this.index : this.index + 1;
+    }
+  },
+  created() {
+    console.log('StepAdmin - Created:', {
+      hasFirstPartner: this.hasFirstPartner,
+      index: this.index,
+      displayNumber: this.displayNumber
+    });
+    
+    // Garante que os dados começam vazios
+    this.localData = this.getEmptyData();
+  },
   methods: {
-    initializeLocalData() {
-      switch(this.index) {
-        case 0: // Primeiro Sócio
-          return {
-            nome: this.formData.customfield_shorttext21 || '',     // Nome Completo Socio 1
-            cpf: this.formData.customfield_shorttext22 || '',      // CPF Socio 1
-            email: this.formData.customfield_shorttext14 || '',    // Email Socio 1
-            telefone: this.formData.customfield_shorttext13 || '', // Telefone Socio 1
-            dataNascimento: this.formData.customfield_date1 || '', // Data Nascimento Socio 1
-            cep: this.formData.customfield_shorttext2 || '',       // CEP Socio 1
-            endereco: this.formData.customfield_shorttext4 || '',  // Endereco Socio 1
-            numero: this.formData.customfield_shorttext3 || '',    // Numero Socio 1
-            complemento: this.formData.customfield_shorttext12 || '', // Complemento Socio 1
-            bairro: this.formData.customfield_shorttext5 || '',    // Bairro Socio 1
-            cidade: this.formData.customfield_shorttext8 || '',    // Cidade Socio 1
-            uf: this.formData.customfield_shorttext7 || '',        // UF Socio 1
-            pais: this.formData.customfield_shorttext10 || '',     // Pais Socio 1
-            antecedentes: this.formData.customfield_file4 || null  // Antecedentes Criminais Socio 1
-          };
-        case 1: // Segundo Sócio
-          return {
-            nome: this.formData.customfield_shorttext48 || '',     // Nome Completo Socio 2
-            cpf: this.formData.customfield_shorttext60 || '',      // CPF Socio 2
-            email: this.formData.customfield_shorttext52 || '',    // Email Socio 2
-            telefone: this.formData.customfield_shorttext40 || '', // Telefone Socio 2
-            dataNascimento: this.formData.customfield_date5 || '', // Data Nascimento Socio 2
-            cep: this.formData.customfield_shorttext55 || '',      // CEP Socio 2
-            endereco: this.formData.customfield_shorttext42 || '', // Endereco Socio 2
-            numero: this.formData.customfield_shorttext57 || '',   // Numero Socio 2
-            complemento: this.formData.customfield_shorttext49 || '', // Complemento Socio 2
-            bairro: this.formData.customfield_shorttext58 || '',   // Bairro Socio 2
-            cidade: this.formData.customfield_shorttext46 || '',   // Cidade Socio 2
-            uf: this.formData.customfield_shorttext59 || '',       // UF Socio 2
-            pais: this.formData.customfield_shorttext53 || '',     // Pais Socio 2
-            antecedentes: this.formData.customfield_file10 || null // Antecedentes Criminais Socio 2
-          };
-        case 2: // Terceiro Sócio
-          return {
-            nome: this.formData.customfield_shorttext51 || '',     // Nome Completo Socio 3
-            cpf: this.formData.customfield_shorttext31 || '',      // CPF Socio 3
-            email: this.formData.customfield_shorttext56 || '',    // Email Socio 3
-            telefone: this.formData.customfield_shorttext35 || '', // Telefone Socio 3
-            dataNascimento: this.formData.customfield_date3 || '', // Data Nascimento Socio 3
-            cep: this.formData.customfield_shorttext25 || '',      // CEP Socio 3
-            endereco: this.formData.customfield_shorttext38 || '', // Endereco Socio 3
-            numero: this.formData.customfield_shorttext30 || '',   // Numero Socio 3
-            complemento: this.formData.customfield_shorttext37 || '', // Complemento Socio 3
-            bairro: this.formData.customfield_shorttext28 || '',   // Bairro Socio 3
-            cidade: this.formData.customfield_shorttext39 || '',   // Cidade Socio 3
-            uf: this.formData.customfield_shorttext33 || '',       // UF Socio 3
-            pais: this.formData.customfield_shorttext41 || '',     // Pais Socio 3
-            antecedentes: this.formData.customfield_file9 || null  // Antecedentes Criminais Socio 3
-          };
-        case 3: // Quarto Sócio
-          return {
-            nome: this.formData.customfield_shorttext44 || '',     // Nome Completo Socio 4
-            cpf: this.formData.customfield_shorttext27 || '',      // CPF Socio 4
-            email: this.formData.customfield_shorttext43 || '',    // Email Socio 4
-            telefone: this.formData.customfield_shorttext26 || '', // Telefone Socio 4
-            dataNascimento: this.formData.customfield_date4 || '', // Data Nascimento Socio 4
-            cep: this.formData.customfield_shorttext45 || '',      // CEP Socio 4
-            endereco: this.formData.customfield_shorttext29 || '', // Endereco Socio 4
-            numero: this.formData.customfield_shorttext50 || '',   // Numero Socio 4
-            complemento: this.formData.customfield_shorttext34 || '', // Complemento Socio 4
-            bairro: this.formData.customfield_shorttext47 || '',   // Bairro Socio 4
-            cidade: this.formData.customfield_shorttext32 || '',   // Cidade Socio 4
-            uf: this.formData.customfield_shorttext54 || '',       // UF Socio 4
-            pais: this.formData.customfield_shorttext36 || '',     // Pais Socio 4
-            antecedentes: this.formData.customfield_file8 || null  // Antecedentes Criminais Socio 4
-          };
-        default:
-          return {};
-      }
+    initializeData() {
+      // Usa dados em cache se existirem, senão retorna objeto vazio
+      return this.cachedData || {
+        nome: '',
+        email: '',
+        cpf: '',
+        dataNascimento: '',
+        telefone: '',
+        cep: '',
+        endereco: '',
+        numero: '',
+        complemento: '',
+        bairro: '',
+        cidade: '',
+        uf: '',
+        pais: '',
+        antecedentes: null
+      };
+    },
+    getEmptyData() {
+      return {
+        nome: '',
+        email: '',
+        cpf: '',
+        dataNascimento: '',
+        telefone: '',
+        cep: '',
+        endereco: '',
+        numero: '',
+        complemento: '',
+        bairro: '',
+        cidade: '',
+        uf: '',
+        pais: '',
+        antecedentes: null
+      };
     },
     handleFileUpload(event) {
       const file = event.target.files[0];
@@ -316,7 +306,7 @@ export default {
           fileUploadManager.addFile(customFieldName, file);
           this.localData.antecedentes = file;
           
-          console.log(`Antecedentes do Sócio ${this.index + 1} selecionado:`, {
+          console.log(`Antecedentes do Sócio ${this.displayNumber} selecionado:`, {
             nome: file.name,
             tamanho: file.size,
             tipo: file.type,
@@ -326,10 +316,116 @@ export default {
       }
     },
     handleNext() {
-      this.$emit('next', {
+      const formattedData = {
         ...this.localData,
-        socioIndex: this.index
+        dataNascimento: this.localData.dataNascimento ? 
+          this.localData.dataNascimento.split('T')[0] + 'T10:45:00-0300' : ''
+      };
+      
+      console.log('Dados sendo enviados do StepAdmin:', formattedData);
+      this.$emit('next', formattedData);
+      
+      // Reset após enviar
+      this.localData = this.getEmptyData();
+    },
+    handlePrev() {
+      this.$emit('prev');
+      // Reset ao voltar também
+      this.localData = this.getEmptyData();
+    },
+    mapFields(data) {
+      console.log('StepAdmin - Index:', this.index);
+      console.log('StepAdmin - É sócio 1?', this.formData.isSocio1);
+      
+      const mappingIndex = this.hasFirstPartner ? this.index : this.index;
+      console.log('StepAdmin - Índice para mapping:', mappingIndex);
+
+      const mappings = [
+        {
+          // Sócio 1
+          nome: 'customfield_shorttext21',
+          cpf: 'customfield_shorttext22',
+          email: 'customfield_shorttext14',
+          telefone: 'customfield_shorttext13',
+          dataNascimento: 'customfield_date1',
+          antecedentes: 'customfield_file4',
+          cep: 'customfield_shorttext2',
+          endereco: 'customfield_shorttext4',
+          numero: 'customfield_shorttext3',
+          complemento: 'customfield_shorttext12',
+          bairro: 'customfield_shorttext5',
+          cidade: 'customfield_shorttext8',
+          uf: 'customfield_shorttext7',
+          pais: 'customfield_shorttext10'
+        },
+        {
+          // Sócio 2
+          nome: 'customfield_shorttext48',
+          cpf: 'customfield_shorttext60',
+          email: 'customfield_shorttext52',
+          telefone: 'customfield_shorttext40',
+          dataNascimento: 'customfield_date5',
+          antecedentes: 'customfield_file10',
+          cep: 'customfield_shorttext55',
+          endereco: 'customfield_shorttext42',
+          numero: 'customfield_shorttext57',
+          complemento: 'customfield_shorttext49',
+          bairro: 'customfield_shorttext58',
+          cidade: 'customfield_shorttext46',
+          uf: 'customfield_shorttext59',
+          pais: 'customfield_shorttext53'
+        },
+        {
+          // Sócio 3
+          nome: 'customfield_shorttext51',
+          cpf: 'customfield_shorttext31',
+          email: 'customfield_shorttext56',
+          telefone: 'customfield_shorttext35',
+          dataNascimento: 'customfield_date3',
+          antecedentes: 'customfield_file9',
+          cep: 'customfield_shorttext25',
+          endereco: 'customfield_shorttext38',
+          numero: 'customfield_shorttext30',
+          complemento: 'customfield_shorttext37',
+          bairro: 'customfield_shorttext28',
+          cidade: 'customfield_shorttext39',
+          uf: 'customfield_shorttext33',
+          pais: 'customfield_shorttext41'
+        },
+        {
+          // Sócio 4
+          nome: 'customfield_shorttext44',
+          cpf: 'customfield_shorttext27',
+          email: 'customfield_shorttext43',
+          telefone: 'customfield_shorttext26',
+          dataNascimento: 'customfield_date4',
+          antecedentes: 'customfield_file8',
+          cep: 'customfield_shorttext45',
+          endereco: 'customfield_shorttext29',
+          numero: 'customfield_shorttext50',
+          complemento: 'customfield_shorttext34',
+          bairro: 'customfield_shorttext47',
+          cidade: 'customfield_shorttext32',
+          uf: 'customfield_shorttext54',
+          pais: 'customfield_shorttext36'
+        }
+      ];
+
+      const mapping = mappings[mappingIndex];
+      if (!mapping) {
+        console.error('Mapping não encontrado para índice:', mappingIndex);
+        return data;
+      }
+
+      const result = {};
+      Object.entries(data).forEach(([key, value]) => {
+        if (mapping[key]) {
+          result[mapping[key]] = value;
+        }
       });
+
+      console.log('Dados mapeados para sócio:', result);
+      return result;
     }
   },
   watch: {
@@ -337,7 +433,7 @@ export default {
       immediate: true,
       deep: true,
       handler() {
-        this.localData = this.initializeLocalData();
+        this.localData = this.initializeData();
       }
     }
   },

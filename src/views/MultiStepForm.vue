@@ -5,11 +5,19 @@
       <component
         v-if="currentStep < steps.length - 1"
         :is="steps[currentStep].component"
-        :formData="formData"
+        :form-data="formData"
+        :has-first-partner="formData.isSocio1"
         :index="currentStepProps.index"
         @next="handleNextStep"
         @prev="handlePreviousStep"
-      />
+      >
+        <StepAdmin
+          :form-data="formData"
+          :has-first-partner="formData.isSocio1"
+          :index="step.index"
+          :cached-data="sociosCache[currentStep - 3]"
+        />
+      </component>
 
       <!-- Última etapa: Exibição do JSON -->
       <div v-else>
@@ -40,6 +48,8 @@ import StepDetails from "../components/steps/StepDetails.vue";
 import StepCompany from "../components/steps/StepCompany.vue";
 import StepAdmin from "../components/steps/StepAdmin.vue";
 import StepDocuments from "../components/steps/StepDocuments.vue";
+import StepTriagem from "../components/steps/StepTriagem.vue";
+import StepSummary from "../components/steps/StepSummary.vue";
 import api from "../services/api";
 import { formatDate, formatPhone, formatDateBR } from "../utils/formatters";
 import { handleFileUpload } from "../utils/fileHandlers";
@@ -54,131 +64,53 @@ export default {
     StepCompany,
     StepAdmin,
     StepDocuments,
+    StepTriagem,
+    StepSummary
   },
   data() {
     return {
       currentStep: 0,
       socioCount: 1,
       isSubmitting: false,
-      steps: [],
-      formData: {
-        // Campos padrão
-        title: "",
-        description: "",
-        record_owner: "",
-        duedate: "",
-        priority: "",
-
-        // Dados da Empresa
-        customfield_shorttext17: "", // Razão Social
-        customfield_shorttext20: "", // CNPJ
-        customfield_shorttext1: "", // Nome Fantasia
-        customfield_file7: "", // Cartão CNPJ
-        customfield_shorttext19: "", // Email
-        customfield_longtext1: "", // Atividade Principal
-        customfield_shorttext16: "", // Telefone
-        customfield_date2: "", // Data Abertura
-        customfield_shorttext18: "", // CEP
-        customfield_shorttext23: "", // Endereço
-        customfield_integer1: "", // Número
-        customfield_shorttext15: "", // Complemento
-        customfield_shorttext11: "", // Bairro
-        customfield_shorttext24: "", // Cidade
-        customfield_shorttext6: "", // UF
-        customfield_shorttext9: "", // País
-
-        // Dados do Primeiro Sócio
-        customfield_shorttext21: "", // Nome Completo Sócio 1
-        customfield_shorttext22: "", // CPF Sócio 1
-        customfield_shorttext14: "", // Email Sócio 1
-        customfield_shorttext13: "", // Telefone Sócio 1
-        customfield_date1: "", // Data Nascimento Sócio 1
-        customfield_file4: "", // Atestado Antecedentes Criminais Sócio 1
-        customfield_shorttext2: "", // CEP Sócio 1
-        customfield_shorttext4: "", // Endereço Sócio 1
-        customfield_shorttext3: "", // Número Sócio 1
-        customfield_shorttext12: "", // Complemento Sócio 1
-        customfield_shorttext5: "", // Bairro Sócio 1
-        customfield_shorttext8: "", // Cidade Sócio 1
-        customfield_shorttext7: "", // UF Sócio 1
-        customfield_shorttext10: "", // País Sócio 1
-
-        // Dados do Segundo Sócio
-        customfield_shorttext48: "", // Nome Completo Sócio 2
-        customfield_shorttext60: "", // CPF Sócio 2
-        customfield_shorttext52: "", // Email Sócio 2
-        customfield_shorttext40: "", // Telefone Sócio 2
-        customfield_date5: "", // Data Nascimento Sócio 2
-        customfield_file10: "", // Atestado Antecedentes Criminais Sócio 2
-        customfield_shorttext55: "", // CEP Sócio 2
-        customfield_shorttext42: "", // Endereço Sócio 2
-        customfield_shorttext57: "", // Número Sócio 2
-        customfield_shorttext49: "", // Complemento Sócio 2
-        customfield_shorttext58: "", // Bairro Sócio 2
-        customfield_shorttext46: "", // Cidade Sócio 2
-        customfield_shorttext59: "", // UF Sócio 2
-        customfield_shorttext53: "", // País Sócio 2
-
-        // Dados do Terceiro Sócio
-        customfield_shorttext51: "", // Nome Completo Sócio 3
-        customfield_shorttext31: "", // CPF Sócio 3
-        customfield_shorttext56: "", // Email Sócio 3
-        customfield_shorttext35: "", // Telefone Sócio 3
-        customfield_date3: "", // Data Nascimento Sócio 3
-        customfield_file9: "", // Atestado Antecedentes Criminais Sócio 3
-        customfield_shorttext25: "", // CEP Sócio 3
-        customfield_shorttext38: "", // Endereço Sócio 3
-        customfield_shorttext30: "", // Número Sócio 3
-        customfield_shorttext37: "", // Complemento Sócio 3
-        customfield_shorttext28: "", // Bairro Sócio 3
-        customfield_shorttext39: "", // Cidade Sócio 3
-        customfield_shorttext33: "", // UF Sócio 3
-        customfield_shorttext41: "", // País Sócio 3
-
-        // Dados do Quarto Sócio
-        customfield_shorttext44: "", // Nome Completo Sócio 4
-        customfield_shorttext27: "", // CPF Sócio 4
-        customfield_shorttext43: "", // Email Sócio 4
-        customfield_shorttext26: "", // Telefone Sócio 4
-        customfield_date4: "", // Data Nascimento Sócio 4
-        customfield_file8: "", // Atestado Antecedentes Criminais Sócio 4
-        customfield_shorttext45: "", // CEP Sócio 4
-        customfield_shorttext29: "", // Endereço Sócio 4
-        customfield_shorttext50: "", // Número Sócio 4
-        customfield_shorttext34: "", // Complemento Sócio 4
-        customfield_shorttext47: "", // Bairro Sócio 4
-        customfield_shorttext32: "", // Cidade Sócio 4
-        customfield_shorttext54: "", // UF Sócio 4
-        customfield_shorttext36: "", // País Sócio 4
-
-        // Documentos
-        customfield_file1: "", // Contrato Social
-        customfield_file2: "", // Dados Bancarios
-        customfield_file3: "", // Certificado Conselho de Classe
-        customfield_file4: "", // Atestado de Antecedentes Criminais Socio 1
-        customfield_file5: "", // Inscricao Municipal
-        customfield_file6: "", // CND
-        customfield_file7: "", // Cartao CNPJ
-        customfield_file8: "", // Atestado de Antecedentes Criminais Socio 4
-        customfield_file9: "", // Atestado de Antecedentes Criminais Socio 3
-        customfield_file10: "", // Atestado de Antecedentes Criminais Socio 2
-      },
+      steps: [
+        { title: "Início", component: StepTriagem },
+        { title: "Detalhes", component: StepDetails },
+        { title: "Empresa", component: StepCompany },
+        { title: "Documentos", component: StepDocuments },
+        { title: "Resumo", component: StepSummary }
+      ],
       errorMessage: "",
       successMessage: "",
-      isSubmitting: false,
+      partnerData: {},
+      hasFirstPartner: false,
+      maxPartners: 4,
+      tempDetailsData: null,
+      formData: {
+        isSocio1: false,
+        customfield_integer2: '',
+        title: '',
+        description: '',
+        record_owner: '',
+        duedate: '',
+        priority: ''
+      },
+      tempUserData: null,
+      sociosCache: {}
     };
   },
   computed: {
     currentStepProps() {
       return {
         formData: this.formData,
-        index: this.currentStep >= 2 && this.currentStep < this.steps.length - 2 ? this.currentStep - 2 : null,
+        hasFirstPartner: this.formData.isSocio1,
+        index: this.currentStep >= 2 && this.currentStep < this.steps.length - 2 ? 
+          this.currentStep - 2 : null
       };
     },
-
-    // Adiciona computed property para formatar o JSON
+    currentComponent() {
+      return this.steps[this.currentStep]?.component;
+    },
     formattedJson() {
-      // Remove campos vazios do formData e inclui informações dos arquivos
       const cleanData = Object.fromEntries(
         Object.entries(this.formData)
           .map(([key, value]) => {
@@ -197,7 +129,6 @@ export default {
           .filter(([_, value]) => value !== "" && value !== null && value !== undefined)
       );
 
-      // Adiciona informações dos arquivos do fileUploadManager
       const files = fileUploadManager.getAllFiles();
       Object.entries(files).forEach(([key, file]) => {
         cleanData[key] = {
@@ -212,21 +143,47 @@ export default {
   },
   methods: {
     handleNextStep(data) {
-      console.log("Dados recebidos:", data);
-
-      // Atualiza o formData mantendo os dados existentes
-      const mappedData = this.mapStepDataToFields(data);
-      this.formData = {
-        ...this.formData,
-        ...mappedData,
-      };
-
-      console.log("FormData atualizado:", this.formData);
-
-      // Avança para o próximo passo
-      if (this.currentStep < this.steps.length) {
+      console.log('Dados recebidos:', data);
+      
+      if (this.currentStep === 1) { // StepDetails
+        if (data.isResponsible && data.isPartner) {
+          this.formData.isSocio1 = true;
+          const mappedData = this.mapStepDataToFields(data);
+          this.formData = { ...this.formData, ...mappedData };
+        } else {
+          this.formData.isSocio1 = false;
+          this.tempDetailsData = data;
+        }
         this.currentStep++;
+        return;
       }
+
+      if (this.currentStep === 2) { // StepCompany
+        const numberOfPartners = parseInt(data.numberOfPartners);
+        this.setupStepsBasedOnPartners(numberOfPartners);
+        this.formData = { ...this.formData, ...data };
+        this.currentStep++;
+        return;
+      }
+
+      // Para StepAdmin
+      if (this.currentStep >= 3 && this.currentStep < this.steps.length - 2) {
+        const socioIndex = this.currentStep - 3;
+        
+        // Salva os dados no cache
+        this.sociosCache[socioIndex] = data;
+        
+        // Mapeia os dados para o formData
+        const mappedData = this.mapSocioFields(data, socioIndex);
+        this.formData = { ...this.formData, ...mappedData };
+        
+        this.currentStep++;
+        return;
+      }
+
+      const mappedData = this.mapStepDataToFields(data);
+      this.formData = { ...this.formData, ...mappedData };
+      this.currentStep++;
     },
     handlePreviousStep() {
       if (this.currentStep > 0) {
@@ -242,32 +199,37 @@ export default {
 
       try {
         const formData = new FormData();
+        const fieldsToExclude = ["priority", "description", "layout_id", "isSocio1", "numberOfPartners", "totalPartners"];
 
-        // Campos básicos obrigatórios
-        formData.append("title", this.formData.title || "");
+        formData.append("title", this.formData.customfield_shorttext17 || "Nova Solicitação");
         formData.append("priority", "33662000000000289");
         formData.append("description", this.formData.description || "");
         formData.append("layout_id", "33662000000053045");
 
-        // Campos de texto do formulário
         Object.entries(this.formData).forEach(([key, value]) => {
-          if (value && typeof value === "string" && !["title", "priority", "description", "layout_id"].includes(key)) {
+          if (fieldsToExclude.includes(key)) {
+            return;
+          }
+
+          if (value instanceof File) {
+            formData.append(key, value);
+          } 
+          else if (value !== null && value !== undefined && value !== '') {
             formData.append(key, value);
           }
         });
 
-        // Adiciona os arquivos de forma simplificada
         const files = fileUploadManager.getAllFiles();
         Object.entries(files).forEach(([key, file]) => {
-          // Importante: Não usar o terceiro parâmetro no append
           formData.append(key, file);
         });
 
-        // Log para debug
-        console.log("=== Arquivos sendo enviados ===");
+        console.log("=== Dados sendo enviados ===");
         for (let [key, value] of formData.entries()) {
           if (value instanceof File) {
             console.log(`${key}: ${value.name} (${value.size} bytes)`);
+          } else {
+            console.log(`${key}: ${value}`);
           }
         }
 
@@ -279,7 +241,7 @@ export default {
 
         if (response.status === 201 || response.status === 200) {
           this.successMessage = "Formulário enviado com sucesso!";
-          fileUploadManager.clear(); // Limpa os arquivos após sucesso
+          fileUploadManager.clear();
         }
       } catch (error) {
         console.error("Erro ao enviar formulário:", error);
@@ -288,247 +250,256 @@ export default {
         this.isSubmitting = false;
       }
     },
-    setupSteps() {
-      // Reseta os steps básicos
-      this.steps = [
+    setupStepsBasedOnPartners(numberOfPartners) {
+      const baseSteps = [
+        { title: "Início", component: StepTriagem },
         { title: "Detalhes", component: StepDetails },
-        { title: "Empresa", component: StepCompany },
+        { title: "Empresa", component: StepCompany }
       ];
 
-      // Adiciona steps para cada sócio baseado na quantidade selecionada
-      for (let i = 1; i <= this.socioCount; i++) {
-        this.steps.push({
-          title: `Sócio ${i}`,
+      // Define o número máximo de sócios baseado na existência do sócio 1
+      const maxSocios = this.formData.isSocio1 ? 3 : 4;
+      const sociosParaAdicionar = Math.min(numberOfPartners, maxSocios);
+
+      // Adiciona os steps de sócio com o índice correto
+      for (let i = 0; i < sociosParaAdicionar; i++) {
+        // Aqui está a mudança principal: o displayNumber sempre começa do 1
+        const displayNumber = i + 1;
+        baseSteps.push({
+          title: `Sócio ${displayNumber}`,
           component: StepAdmin,
+          // O mapping continua considerando o offset quando tem sócio 1
+          index: this.formData.isSocio1 ? i + 1 : i
         });
       }
 
-      // Adiciona o step de documentos e resumo
-      this.steps.push({ title: "Documentos", component: StepDocuments }, { title: "Resumo", component: null });
+      baseSteps.push(
+        { title: "Documentos", component: StepDocuments },
+        { title: "Resumo", component: StepSummary }
+      );
+
+      console.log('Steps gerados:', baseSteps.map(step => ({
+        title: step.title,
+        mappingIndex: step.index
+      })));
+
+      this.steps = baseSteps;
     },
-    mapStepDataToFields(data) {
-      switch (this.currentStep) {
-        case 0: // StepDetails
+    mapStepDataToFields(data, index) {
+      console.log('Mapeando dados do step:', this.currentStep, 'Com dados:', data);
+      
+      switch(this.currentStep) {
+        case 0:
           return {
-            title: data.title || "",
-            priority: data.priority || "",
-            customfield_integer2: data.numberOfPartners || "",
-            description: data.description || "",
+            customfield_shorttext61: data.codigoReferencia || ''
           };
 
-        case 1: // StepCompany
-          return {
-            customfield_shorttext20: data.cnpj || "", // CNPJ
-            customfield_shorttext17: data.razaoSocial || "", // Razao Social
-            customfield_shorttext1: data.nomeFantasia || "", // Nome Fantasia
-            customfield_shorttext19: data.email || "", // Email
-            customfield_longtext1: data.atividadePrincipal || "", // Atividade Principal
-            customfield_shorttext16: data.telefone || "", // Telefone
-            customfield_date2: data.dataAbertura
-              ? new Date(data.dataAbertura)
-                  .toLocaleString("en-US", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: true,
-                  })
-                  .replace(/\//g, "-")
-                  .replace(",", "")
-              : "", // Data de Abertura
-            customfield_shorttext18: data.cep || "", // CEP
-            customfield_shorttext23: data.endereco || "", // Endereco
-            customfield_integer1: data.numero || "", // Numero
-            customfield_shorttext15: data.complemento || "", // Complemento
-            customfield_shorttext11: data.bairro || "", // Bairro
-            customfield_shorttext24: data.cidade || "", // Cidade
-            customfield_shorttext6: data.uf || "", // UF
-            customfield_shorttext9: data.pais || "", // Pais
-          };
+        case 1:
+          if (data.isResponsible && data.isPartner) {
+            return {
+              isSocio1: true,
+              customfield_shorttext21: data.nomeCompleto || '',
+              customfield_shorttext22: data.cpf || '',
+              customfield_shorttext14: data.email || '',
+              customfield_shorttext13: data.telefone || '',
+              customfield_date1: data.dataNascimento || '',
+              customfield_file4: data.antecedentes || null,
+              customfield_shorttext2: data.cep || '',
+              customfield_shorttext4: data.endereco || '',
+              customfield_shorttext3: data.numero || '',
+              customfield_shorttext12: data.complemento || '',
+              customfield_shorttext5: data.bairro || '',
+              customfield_shorttext8: data.cidade || '',
+              customfield_shorttext7: data.uf || '',
+              customfield_shorttext10: data.pais || ''
+            };
+          }
+          return { isSocio1: false };
 
-        case 2: // Primeiro Sócio
+        case 2:
           return {
-            customfield_shorttext21: data.nome || "", // Nome Completo
-            customfield_shorttext22: data.cpf || "", // CPF
-            customfield_shorttext14: data.email || "", // Email
-            customfield_shorttext13: data.telefone || "", // Telefone
-            customfield_date1: data.dataNascimento
-              ? new Date(data.dataNascimento)
-                  .toLocaleString("en-US", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: true,
-                  })
-                  .replace(/\//g, "-")
-                  .replace(",", "")
-              : "", // Data Nascimento
-            customfield_shorttext2: data.cep || "", // CEP
-            customfield_shorttext4: data.endereco || "", // Endereço
-            customfield_shorttext3: data.numero || "", // Número
-            customfield_shorttext12: data.complemento || "", // Complemento
-            customfield_shorttext5: data.bairro || "", // Bairro
-            customfield_shorttext8: data.cidade || "", // Cidade
-            customfield_shorttext7: data.uf || "", // UF
-            customfield_shorttext10: data.pais || "", // País
-          };
-
-        case 3: // Segundo Sócio
-          return {
-            customfield_shorttext48: data.nome || "", // Nome Completo Socio 2
-            customfield_shorttext60: data.cpf || "", // CPF Socio 2
-            customfield_shorttext52: data.email || "", // Email Socio 2
-            customfield_shorttext40: data.telefone || "", // Telefone Socio 2
-            customfield_date5: data.dataNascimento
-              ? new Date(data.dataNascimento)
-                  .toLocaleString("en-US", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: true,
-                  })
-                  .replace(/\//g, "-")
-                  .replace(",", "")
-              : "", // Data Nascimento Socio 2
-            customfield_file10: data.atestadoAntecedentes || "", // Atestado Antecedentes Socio 2
-            customfield_shorttext55: data.cep || "", // CEP Socio 2
-            customfield_shorttext42: data.endereco || "", // Endereco Socio 2
-            customfield_shorttext57: data.numero || "", // Numero Socio 2
-            customfield_shorttext49: data.complemento || "", // Complemento Socio 2
-            customfield_shorttext58: data.bairro || "", // Bairro Socio 2
-            customfield_shorttext46: data.cidade || "", // Cidade Socio 2
-            customfield_shorttext59: data.uf || "", // UF Socio 2
-            customfield_shorttext53: data.pais || "", // Pais Socio 2
-          };
-
-        case 4: // Terceiro Sócio
-          return {
-            customfield_shorttext51: data.nome || "", // Nome Completo
-            customfield_shorttext31: data.cpf || "", // CPF
-            customfield_shorttext56: data.email || "", // Email
-            customfield_shorttext35: data.telefone || "", // Telefone
-            customfield_date3: data.dataNascimento
-              ? new Date(data.dataNascimento)
-                  .toLocaleString("en-US", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: true,
-                  })
-                  .replace(/\//g, "-")
-                  .replace(",", "")
-              : "", // Data Nascimento Socio 3
-            customfield_file9: data.atestadoAntecedentes || "", // Atestado Antecedentes
-            customfield_shorttext25: data.cep || "", // CEP
-            customfield_shorttext38: data.endereco || "", // Endereco
-            customfield_shorttext30: data.numero || "", // Numero
-            customfield_shorttext37: data.complemento || "", // Complemento
-            customfield_shorttext28: data.bairro || "", // Bairro
-            customfield_shorttext39: data.cidade || "", // Cidade
-            customfield_shorttext33: data.uf || "", // UF
-            customfield_shorttext41: data.pais || "", // Pais
-          };
-
-        case 5: // Quarto Sócio
-          return {
-            customfield_shorttext44: data.nome || "", // Nome Completo
-            customfield_shorttext27: data.cpf || "", // CPF
-            customfield_shorttext43: data.email || "", // Email
-            customfield_shorttext26: data.telefone || "", // Telefone
-            customfield_date4: data.dataNascimento
-              ? new Date(data.dataNascimento)
-                  .toLocaleString("en-US", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: true,
-                  })
-                  .replace(/\//g, "-")
-                  .replace(",", "")
-              : "", // Data Nascimento Socio 4
-            customfield_file8: data.atestadoAntecedentes || "", // Atestado Antecedentes
-            customfield_shorttext45: data.cep || "", // CEP
-            customfield_shorttext29: data.endereco || "", // Endereco
-            customfield_shorttext50: data.numero || "", // Numero
-            customfield_shorttext34: data.complemento || "", // Complemento
-            customfield_shorttext47: data.bairro || "", // Bairro
-            customfield_shorttext32: data.cidade || "", // Cidade
-            customfield_shorttext54: data.uf || "", // UF
-            customfield_shorttext36: data.pais || "", // Pais
+            customfield_integer2: data.numberOfPartners || '',
+            customfield_shorttext20: data.cnpj || '',
+            customfield_shorttext17: data.razaoSocial || '',
+            customfield_shorttext1: data.nomeFantasia || '',
+            customfield_shorttext19: data.email || '',
+            customfield_longtext1: data.atividadePrincipal || '',
+            customfield_shorttext16: data.telefone || '',
+            customfield_date2: data.dataAbertura || '',
+            customfield_shorttext18: data.cep || '',
+            customfield_shorttext23: data.endereco || '',
+            customfield_integer1: data.numero || '',
+            customfield_shorttext15: data.complemento || '',
+            customfield_shorttext11: data.bairro || '',
+            customfield_shorttext24: data.cidade || '',
+            customfield_shorttext6: data.uf || '',
+            customfield_shorttext9: data.pais || '',
+            customfield_file7: data.cartaoCnpj || null
           };
 
         default:
+          if (this.currentStep >= 3) {
+            const mappingIndex = this.formData.isSocio1 ? 
+              this.currentStep - 2 :
+              this.currentStep - 3;
+
+            console.log('Índice para mapping:', mappingIndex);
+            return this.mapSocioFields(data, mappingIndex);
+          }
           return data;
       }
     },
-    async prepareFormData() {
-      try {
-        const data = { ...this.formData };
+    mapSocioFields(data, mappingIndex) {
+      const adjustedIndex = this.formData.isSocio1 ? mappingIndex + 1 : mappingIndex;
+      
+      const mappings = {
+        1: {
+          nome: 'customfield_shorttext48',
+          cpf: 'customfield_shorttext60',
+          email: 'customfield_shorttext52',
+          telefone: 'customfield_shorttext40',
+          dataNascimento: 'customfield_date5',
+          antecedentes: 'customfield_file10',
+          cep: 'customfield_shorttext55',
+          endereco: 'customfield_shorttext42',
+          numero: 'customfield_shorttext57',
+          complemento: 'customfield_shorttext49',
+          bairro: 'customfield_shorttext58',
+          cidade: 'customfield_shorttext46',
+          uf: 'customfield_shorttext59',
+          pais: 'customfield_shorttext53'
+        },
+        2: {
+          nome: 'customfield_shorttext51',
+          cpf: 'customfield_shorttext31',
+          email: 'customfield_shorttext56',
+          telefone: 'customfield_shorttext35',
+          dataNascimento: 'customfield_date3',
+          antecedentes: 'customfield_file9',
+          cep: 'customfield_shorttext25',
+          endereco: 'customfield_shorttext38',
+          numero: 'customfield_shorttext30',
+          complemento: 'customfield_shorttext37',
+          bairro: 'customfield_shorttext28',
+          cidade: 'customfield_shorttext39',
+          uf: 'customfield_shorttext33',
+          pais: 'customfield_shorttext41'
+        },
+        3: {
+          nome: 'customfield_shorttext44',
+          cpf: 'customfield_shorttext27',
+          email: 'customfield_shorttext43',
+          telefone: 'customfield_shorttext26',
+          dataNascimento: 'customfield_date4',
+          antecedentes: 'customfield_file8',
+          cep: 'customfield_shorttext45',
+          endereco: 'customfield_shorttext29',
+          numero: 'customfield_shorttext50',
+          complemento: 'customfield_shorttext34',
+          bairro: 'customfield_shorttext47',
+          cidade: 'customfield_shorttext32',
+          uf: 'customfield_shorttext54',
+          pais: 'customfield_shorttext36'
+        }
+      };
 
-        // Obtém todos os arquivos do fileUploadManager
-        const files = fileUploadManager.getAllFiles();
-
-        const preparedData = {
-          // ... resto do código existente ...
-
-          // Adiciona os arquivos ao preparedData
-          ...Object.entries(files).reduce(
-            (acc, [key, file]) => ({
-              ...acc,
-              [key]: {
-                name: file.name,
-                size: file.size,
-                type: file.type,
-              },
-            }),
-            {}
-          ),
-        };
-
-        // Remove campos vazios
-        const cleanedData = Object.fromEntries(
-          Object.entries(preparedData).filter(([_, value]) => value !== "" && value !== null && value !== undefined)
-        );
-
-        return cleanedData;
-      } catch (error) {
-        console.error("Erro ao preparar dados:", error);
-        throw error;
+      const mapping = mappings[adjustedIndex];
+      if (!mapping) {
+        console.error('Mapping não encontrado para índice:', adjustedIndex);
+        return data;
       }
+
+      const result = {};
+      Object.entries(data).forEach(([key, value]) => {
+        if (mapping[key]) {
+          result[mapping[key]] = value;
+        }
+      });
+
+      console.log('Dados mapeados para sócio:', result);
+      return result;
     },
-    async createCard(cardData) {
-      try {
-        const response = await api.post("/cards", cardData);
-        console.log("Resposta da API:", response.data);
-        return response.data;
-      } catch (error) {
-        console.error("Erro detalhado:", error.response ? error.response.data : error);
-        throw new Error("Erro ao criar card: " + error.message);
-      }
+    getPartnerMapping(index) {
+      const mappings = [
+        {
+          nome: 'customfield_shorttext48',
+          cpf: 'customfield_shorttext60',
+          email: 'customfield_shorttext52',
+          telefone: 'customfield_shorttext40',
+          dataNascimento: 'customfield_date5',
+          antecedentes: 'customfield_file10',
+          cep: 'customfield_shorttext55',
+          endereco: 'customfield_shorttext42',
+          numero: 'customfield_shorttext57',
+          complemento: 'customfield_shorttext49',
+          bairro: 'customfield_shorttext58',
+          cidade: 'customfield_shorttext46',
+          uf: 'customfield_shorttext59',
+          pais: 'customfield_shorttext53'
+        },
+        // ... outros mappings existentes
+      ];
+      return mappings[index] || {};
     },
+    cleanPartnerFields(currentIndex) {
+      // Arrays com todos os prefixos de campos para cada sócio
+      const partnerPrefixes = {
+        1: ['customfield_shorttext48', 'customfield_shorttext60', 'customfield_shorttext52', 
+            'customfield_shorttext40', 'customfield_date5', 'customfield_file10', 
+            'customfield_shorttext55', 'customfield_shorttext42', 'customfield_shorttext57', 
+            'customfield_shorttext49', 'customfield_shorttext58', 'customfield_shorttext46', 
+            'customfield_shorttext59', 'customfield_shorttext53'],
+        2: ['customfield_shorttext51', 'customfield_shorttext31', 'customfield_shorttext56', 
+            'customfield_shorttext35', 'customfield_date3', 'customfield_file9', 
+            'customfield_shorttext25', 'customfield_shorttext38', 'customfield_shorttext30', 
+            'customfield_shorttext37', 'customfield_shorttext28', 'customfield_shorttext39', 
+            'customfield_shorttext33', 'customfield_shorttext41'],
+        3: ['customfield_shorttext44', 'customfield_shorttext27', 'customfield_shorttext43', 
+            'customfield_shorttext26', 'customfield_date4', 'customfield_file8', 
+            'customfield_shorttext45', 'customfield_shorttext29', 'customfield_shorttext50', 
+            'customfield_shorttext34', 'customfield_shorttext47', 'customfield_shorttext32', 
+            'customfield_shorttext54', 'customfield_shorttext36']
+      };
+
+      // Limpa os campos do sócio atual
+      const fieldsToClean = partnerPrefixes[currentIndex] || [];
+      fieldsToClean.forEach(field => {
+        if (this.formData[field]) {
+          delete this.formData[field];
+        }
+      });
+
+      // Limpa também os campos temporários
+      const tempFields = ['nome', 'cpf', 'email', 'telefone', 'dataNascimento', 
+                         'cep', 'endereco', 'numero', 'complemento', 'bairro', 
+                         'cidade', 'uf', 'pais', 'antecedentes'];
+      
+      tempFields.forEach(field => {
+        if (this.formData[field]) {
+          delete this.formData[field];
+        }
+      });
+    }
   },
   watch: {
-    "formData.customfield_integer2": {
+    'formData.customfield_integer2': {
       immediate: true,
       handler(newValue) {
         if (newValue) {
           this.socioCount = parseInt(newValue);
-          this.setupSteps();
+          this.setupStepsBasedOnPartners(this.socioCount);
         }
-      },
+      }
     },
+    'formData.isSocio1': {
+      immediate: true,
+      handler(newValue) {
+        console.log('Watch - isSocio1 mudou para:', newValue);
+      }
+    }
   },
   mounted() {
-    this.setupSteps();
-  },
+    this.setupStepsBasedOnPartners(this.socioCount);
+  }
 };
 </script>

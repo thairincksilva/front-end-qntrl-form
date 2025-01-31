@@ -1,79 +1,76 @@
 <template>
-  <nav class="w-full max-w-6xl mx-auto px-4 py-4">
-    <ul class="flex flex-wrap justify-center items-center gap-1 md:gap-4">
-      <li
-        v-for="(step, index) in steps"
-        :key="index"
-        class="flex items-center group"
-      >
-        <div class="flex items-center">
-          <div
-            class="flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-lg border-2 transition-all duration-300 font-medium"
-            :class="{
-              'bg-gradient-to-r from-[#991B1B] to-[#7F1D1D] text-white border-[#991B1B] shadow-lg scale-110': index === currentStep,
-              'bg-gray-100 text-gray-400 border-gray-200': index > currentStep,
-              'bg-gradient-to-r from-green-600 to-green-700 text-white border-green-600': index < currentStep,
-            }"
-          >
-            {{ index + 1 }}
-          </div>
-
-          <!-- Indicadores de subetapas para a etapa de sócios -->
-          <div v-if="step === 'Sócios'" class="flex ml-2 gap-1">
-            <div
-              v-for="dot in 4"
-              :key="dot"
-              class="w-1.5 h-1.5 rounded-full transition-all duration-300"
-              :class="{
-                'bg-[#991B1B]': currentStep === index && dot <= (formData?.currentPartnerIndex + 1 || 1),
-                'bg-gray-300': currentStep !== index || dot > (formData?.currentPartnerIndex + 1 || 1)
-              }"
-            ></div>
-          </div>
-        </div>
-
-        <span
-          class="ml-1 text-sm md:text-base font-inter transition-all duration-300 whitespace-nowrap"
-          :class="{
-            'font-bold bg-gradient-to-r from-[#991B1B] to-[#7F1D1D] bg-clip-text text-transparent': index === currentStep,
-            'text-gray-400': index !== currentStep,
-          }"
-        >
-          {{ step }}
-        </span>
+  <div class="flex justify-center items-center w-full">
+    <div class="relative">
+      <!-- Círculo base -->
+      <svg class="w-24 h-24 transform -rotate-90">
+        <!-- Círculo de fundo -->
+        <circle
+          cx="48"
+          cy="48"
+          r="36"
+          stroke="#E5E7EB"
+          stroke-width="8"
+          fill="none"
+        />
         
-        <div
-          v-if="index < steps.length - 1"
-          class="hidden md:block w-16 h-0.5 mx-2 rounded-full transition-all duration-300"
-          :class="{
-            'bg-gradient-to-r from-[#991B1B] to-[#7F1D1D]': index < currentStep,
-            'bg-gray-200': index >= currentStep,
-          }"
-        ></div>
-      </li>
-    </ul>
-  </nav>
+        <!-- Círculo de progresso -->
+        <circle
+          cx="48"
+          cy="48"
+          r="36"
+          stroke="url(#progressGradient)"
+          stroke-width="8"
+          fill="none"
+          :stroke-dasharray="strokeDasharray"
+          :stroke-dashoffset="strokeDashoffset"
+          class="transition-all duration-500 ease-in-out"
+        />
+
+        <!-- Gradiente para o círculo de progresso -->
+        <defs>
+          <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color: #991B1B" />
+            <stop offset="100%" style="stop-color: #7F1D1D" />
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <!-- Número da etapa atual -->
+      <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xl font-bold text-gray-700">
+        {{ currentStep + 1 }}/{{ steps.length }}
+      </div>
+    </div>
+  </div>
 </template>
-  
-  <script>
-  export default {
-    props: {
-      steps: {
-        type: Array,
-        required: true,
-      },
-      currentStep: {
-        type: Number,
-        required: true,
-      },
+
+<script>
+export default {
+  props: {
+    steps: {
+      type: Array,
+      required: true,
     },
-  };
-  </script>
-  
-  <style scoped>
-  /* Opcional: Adicione espaçamento entre os elementos */
-  nav {
-    margin-bottom: 1rem;
-  }
-  </style>
+    currentStep: {
+      type: Number,
+      required: true,
+    },
+  },
+  computed: {
+    strokeDasharray() {
+      return 2 * Math.PI * 36;
+    },
+    strokeDashoffset() {
+      const progress = (this.currentStep + 1) / this.steps.length;
+      return this.strokeDasharray * (1 - progress);
+    },
+  },
+};
+</script>
+
+<style scoped>
+/* Opcional: Adicione espaçamento entre os elementos */
+nav {
+  margin-bottom: 1rem;
+}
+</style>
   

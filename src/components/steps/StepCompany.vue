@@ -31,7 +31,7 @@
             @click="$refs.fileInput.click()"
             class="w-full px-4 py-3 rounded-[0.75rem] border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer font-inter"
           >
-            <span>Escolher arquivo PDF</span>
+            <span>{{ selectedFileName || 'Escolher arquivo PDF' }}</span>
           </button>
         </label>
       </div>
@@ -194,6 +194,25 @@
         />
       </label>
 
+      <!-- Quantidade de Sócios -->
+      <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
+        Quantidade de Sócios:
+        <select 
+          v-model="localData.numberOfPartners"
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30"
+          required
+        >
+          <option value="">Selecione</option>
+          <option 
+            v-for="n in availablePartnerOptions" 
+            :key="n" 
+            :value="n"
+          >
+            {{ n }} {{ n === 1 ? 'Sócio' : 'Sócios' }}
+          </option>
+        </select>
+      </label>
+
       <!-- Botões -->
       <div class="flex justify-between pt-4">
         <button 
@@ -220,19 +239,24 @@ import "flatpickr/dist/flatpickr.min.css";
 import { Portuguese } from "flatpickr/dist/l10n/pt.js";
 
 export default {
+  name: 'StepCompany',
   props: {
     formData: {
       type: Object,
+      required: true
+    },
+    hasFirstPartner: {
+      type: Boolean,
       required: true
     }
   },
   data() {
     return {
+      selectedFileName: '',
       localData: {
-        razaoSocial: this.formData.customfield_shorttext17 || '',
         cnpj: this.formData.customfield_shorttext20 || '',
+        razaoSocial: this.formData.customfield_shorttext17 || '',
         nomeFantasia: this.formData.customfield_shorttext1 || '',
-        cartaoCnpj: this.formData.customfield_file7 || '',
         email: this.formData.customfield_shorttext19 || '',
         atividadePrincipal: this.formData.customfield_longtext1 || '',
         telefone: this.formData.customfield_shorttext16 || '',
@@ -244,33 +268,30 @@ export default {
         bairro: this.formData.customfield_shorttext11 || '',
         cidade: this.formData.customfield_shorttext24 || '',
         uf: this.formData.customfield_shorttext6 || '',
-        pais: this.formData.customfield_shorttext9 || ''
+        pais: this.formData.customfield_shorttext9 || '',
+        cartaoCnpj: null,
+        numberOfPartners: ''
       }
     }
+  },
+  created() {
+    console.log('StepCompany - Created:', {
+      hasFirstPartner: this.hasFirstPartner,
+      formDataIsSocio1: this.formData.isSocio1
+    });
   },
   watch: {
     formData: {
       immediate: true,
       deep: true,
       handler(newValue) {
-        this.localData = {
-          razaoSocial: newValue.customfield_shorttext17 || '',
-          cnpj: newValue.customfield_shorttext20 || '',
-          nomeFantasia: newValue.customfield_shorttext1 || '',
-          cartaoCnpj: newValue.customfield_file7 || '',
-          email: newValue.customfield_shorttext19 || '',
-          atividadePrincipal: newValue.customfield_longtext1 || '',
-          telefone: newValue.customfield_shorttext16 || '',
-          dataAbertura: newValue.customfield_date2 || '',
-          cep: newValue.customfield_shorttext18 || '',
-          endereco: newValue.customfield_shorttext23 || '',
-          numero: newValue.customfield_integer1 || '',
-          complemento: newValue.customfield_shorttext15 || '',
-          bairro: newValue.customfield_shorttext11 || '',
-          cidade: newValue.customfield_shorttext24 || '',
-          uf: newValue.customfield_shorttext6 || '',
-          pais: newValue.customfield_shorttext9 || ''
-        }
+        console.log('hasFirstPartner mudou para:', newValue.isSocio1);
+      }
+    },
+    hasFirstPartner: {
+      immediate: true,
+      handler(newValue) {
+        console.log('StepCompany - hasFirstPartner mudou:', newValue);
       }
     }
   },
@@ -287,9 +308,65 @@ export default {
       }
     });
   },
+  computed: {
+    availablePartnerOptions() {
+      console.log('StepCompany - Calculando opções:', {
+        hasFirstPartner: this.hasFirstPartner,
+        maxPartners: this.hasFirstPartner ? 3 : 4
+      });
+      
+      const maxPartners = this.hasFirstPartner ? 3 : 4;
+      return Array.from({length: maxPartners}, (_, i) => i + 1);
+    }
+  },
   methods: {
     handleNext() {
-      this.$emit('next', this.localData);
+      // Formata os dados antes de enviar
+      const formattedData = {
+        ...this.localData,
+        dataAbertura: this.localData.dataAbertura ? 
+          this.localData.dataAbertura.split('T')[0] + 'T10:45:00-0300' : ''
+      };
+
+      console.log('StepCompany - Dados sendo enviados:', formattedData);
+      
+      const mappedData = this.mapFields(formattedData);
+      console.log('StepCompany - Dados mapeados:', mappedData);
+      
+      this.$emit('next', {
+        ...mappedData,
+        numberOfPartners: this.localData.numberOfPartners,
+        totalPartners: this.hasFirstPartner ? 
+          Number(this.localData.numberOfPartners) + 1 : 
+          Number(this.localData.numberOfPartners)
+      });
+    },
+    mapFields(data) {
+      return {
+        customfield_shorttext20: data.cnpj || '',
+        customfield_shorttext17: data.razaoSocial || '',
+        customfield_shorttext1: data.nomeFantasia || '',
+        customfield_shorttext19: data.email || '',
+        customfield_longtext1: data.atividadePrincipal || '',
+        customfield_shorttext16: data.telefone || '',
+        customfield_date2: data.dataAbertura || '',
+        customfield_shorttext18: data.cep || '',
+        customfield_shorttext23: data.endereco || '',
+        customfield_integer1: data.numero || '',
+        customfield_shorttext15: data.complemento || '',
+        customfield_shorttext11: data.bairro || '',
+        customfield_shorttext24: data.cidade || '',
+        customfield_shorttext6: data.uf || '',
+        customfield_shorttext9: data.pais || '',
+        customfield_file7: data.cartaoCnpj || null
+      };
+    },
+    handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        this.selectedFileName = file.name;
+        this.localData.cartaoCnpj = file;
+      }
     }
   }
 }
