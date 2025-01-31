@@ -157,7 +157,7 @@
 
       <!-- Atestado de Antecedentes Criminais -->
       <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
-        Atestado de Antecedentes Criminais - Sócio {{ displayNumber }}:
+        Atestado de Antecedentes Criminais:
         <div class="mt-2">
           <input
             type="file"
@@ -170,13 +170,25 @@
           />
           <button 
             type="button"
-            @click="$refs.fileInput.click()"
-            class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 text-gray-700 hover:bg-white hover:border-[#991B1B] hover:text-[#991B1B] transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer font-inter group"
+            @click.stop="triggerFileInput('fileInput')"
+            class="w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 text-gray-700 hover:bg-white hover:border-[#991B1B] hover:text-[#991B1B] transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer font-inter group"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+            <span v-if="!localData.antecedentes">Selecionar arquivo</span>
+            <span v-else>{{ localData.antecedentes.name }}</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5 group-hover:scale-110 transition-transform duration-300"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+              />
             </svg>
-            <span>Escolher arquivo PDF</span>
           </button>
         </div>
       </label>
@@ -230,7 +242,8 @@ export default {
   },
   data() {
     return {
-      localData: this.initializeData()
+      localData: this.initializeData(),
+      isTriggering: false
     }
   },
   computed: {
@@ -315,23 +328,27 @@ export default {
         }
       }
     },
-    handleNext() {
-      const formattedData = {
-        ...this.localData,
-        dataNascimento: this.localData.dataNascimento ? 
-          this.localData.dataNascimento.split('T')[0] + 'T10:45:00-0300' : ''
-      };
-      
-      console.log('Dados sendo enviados do StepAdmin:', formattedData);
-      this.$emit('next', formattedData);
-      
-      // Reset após enviar
-      this.localData = this.getEmptyData();
+    async handleNext() {
+      if (this.validateForm()) {
+        const formattedData = {
+          ...this.localData,
+          dataNascimento: this.localData.dataNascimento ? 
+            this.localData.dataNascimento.split('T')[0] + 'T10:45:00-0300' : ''
+        };
+        
+        const mappedData = this.mapFields(formattedData);
+        console.log('Dados sendo enviados do StepAdmin:', mappedData);
+        
+        this.$emit('next', mappedData);
+        
+        this.$emit('cache-socio', {
+          index: this.index,
+          data: this.localData
+        });
+      }
     },
     handlePrev() {
       this.$emit('prev');
-      // Reset ao voltar também
-      this.localData = this.getEmptyData();
     },
     mapFields(data) {
       console.log('StepAdmin - Index:', this.index);
@@ -426,6 +443,20 @@ export default {
 
       console.log('Dados mapeados para sócio:', result);
       return result;
+    },
+    triggerFileInput(refName) {
+      if (this.isTriggering) return;
+      
+      this.isTriggering = true;
+      this.$refs[refName].click();
+      
+      setTimeout(() => {
+        this.isTriggering = false;
+      }, 100);
+    },
+    validateForm() {
+      // Implemente a lógica para validar o formulário
+      return true; // Placeholder, você deve implementar a lógica real
     }
   },
   watch: {

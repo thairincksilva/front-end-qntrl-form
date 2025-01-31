@@ -3,33 +3,13 @@
     <StepNavigation :steps="steps.map((step) => step.title)" :currentStep="currentStep" />
     <div class="flex-grow p-6 w-full max-w-4xl bg-white rounded shadow mt-4">
       <component
-        v-if="currentStep < steps.length - 1"
         :is="steps[currentStep].component"
         :form-data="formData"
         :has-first-partner="formData.isSocio1"
         :index="currentStepProps.index"
         @next="handleNextStep"
         @prev="handlePreviousStep"
-      >
-        <StepAdmin
-          :form-data="formData"
-          :has-first-partner="formData.isSocio1"
-          :index="step.index"
-          :cached-data="sociosCache[currentStep - 3]"
-        />
-      </component>
-
-      <!-- Última etapa: Exibição do JSON -->
-      <div v-else>
-        <h2 class="text-xl font-bold mb-4">Resumo dos Dados</h2>
-        <pre class="bg-gray-100 p-4 rounded overflow-auto text-sm max-h-96">{{ formattedJson }}</pre>
-        <div class="flex justify-between mt-4">
-          <button class="bg-gray-300 px-4 py-2 rounded" @click="handlePreviousStep">Voltar</button>
-          <button class="bg-blue-500 text-white px-4 py-2 rounded" @click="handleSubmit" :disabled="isSubmitting">
-            {{ isSubmitting ? "Enviando..." : "Confirmar e Enviar" }}
-          </button>
-        </div>
-      </div>
+      />
     </div>
 
     <!-- Mensagens de feedback -->
@@ -49,12 +29,12 @@ import StepCompany from "../components/steps/StepCompany.vue";
 import StepAdmin from "../components/steps/StepAdmin.vue";
 import StepDocuments from "../components/steps/StepDocuments.vue";
 import StepTriagem from "../components/steps/StepTriagem.vue";
-import StepSummary from "../components/steps/StepSummary.vue";
 import api from "../services/api";
 import { formatDate, formatPhone, formatDateBR } from "../utils/formatters";
 import { handleFileUpload } from "../utils/fileHandlers";
 import axios from "axios";
 import { fileUploadManager } from "../utils/fileUploadManager";
+import Swal from "sweetalert2";
 
 export default {
   name: "MultiStepForm",
@@ -64,8 +44,7 @@ export default {
     StepCompany,
     StepAdmin,
     StepDocuments,
-    StepTriagem,
-    StepSummary
+    StepTriagem
   },
   data() {
     return {
@@ -76,8 +55,7 @@ export default {
         { title: "Início", component: StepTriagem },
         { title: "Detalhes", component: StepDetails },
         { title: "Empresa", component: StepCompany },
-        { title: "Documentos", component: StepDocuments },
-        { title: "Resumo", component: StepSummary }
+        { title: "Documentos", component: StepDocuments }
       ],
       errorMessage: "",
       successMessage: "",
@@ -166,17 +144,17 @@ export default {
         return;
       }
 
-      // Para StepAdmin
       if (this.currentStep >= 3 && this.currentStep < this.steps.length - 2) {
         const socioIndex = this.currentStep - 3;
-        
-        // Salva os dados no cache
-        this.sociosCache[socioIndex] = data;
-        
-        // Mapeia os dados para o formData
         const mappedData = this.mapSocioFields(data, socioIndex);
-        this.formData = { ...this.formData, ...mappedData };
         
+        // Limpa os dados dos próximos sócios
+        const nextIndex = socioIndex + 1;
+        for (let i = nextIndex; i <= 3; i++) {
+          this.cleanPartnerFields(i);
+        }
+        
+        this.formData = { ...this.formData, ...mappedData };
         this.currentStep++;
         return;
       }
@@ -192,7 +170,7 @@ export default {
     },
     async handleSubmit() {
       if (this.isSubmitting) return;
-
+      
       this.isSubmitting = true;
       this.errorMessage = "";
       this.successMessage = "";
@@ -257,31 +235,19 @@ export default {
         { title: "Empresa", component: StepCompany }
       ];
 
-      // Define o número máximo de sócios baseado na existência do sócio 1
       const maxSocios = this.formData.isSocio1 ? 3 : 4;
       const sociosParaAdicionar = Math.min(numberOfPartners, maxSocios);
 
-      // Adiciona os steps de sócio com o índice correto
       for (let i = 0; i < sociosParaAdicionar; i++) {
-        // Aqui está a mudança principal: o displayNumber sempre começa do 1
         const displayNumber = i + 1;
         baseSteps.push({
           title: `Sócio ${displayNumber}`,
           component: StepAdmin,
-          // O mapping continua considerando o offset quando tem sócio 1
           index: this.formData.isSocio1 ? i + 1 : i
         });
       }
 
-      baseSteps.push(
-        { title: "Documentos", component: StepDocuments },
-        { title: "Resumo", component: StepSummary }
-      );
-
-      console.log('Steps gerados:', baseSteps.map(step => ({
-        title: step.title,
-        mappingIndex: step.index
-      })));
+      baseSteps.push({ title: "Documentos", component: StepDocuments });
 
       this.steps = baseSteps;
     },
@@ -350,8 +316,22 @@ export default {
       }
     },
     mapSocioFields(data, mappingIndex) {
-      const adjustedIndex = this.formData.isSocio1 ? mappingIndex + 1 : mappingIndex;
+      // Define o mapeamento direto baseado no índice do sócio
+      const socioMapping = {
+        0: this.formData.isSocio1 ? 1 : 1, // Primeiro sócio adicional
+        1: this.formData.isSocio1 ? 2 : 2, // Segundo sócio adicional
+        2: this.formData.isSocio1 ? 3 : 3  // Terceiro sócio adicional
+      };
+
+      const mappingKey = socioMapping[mappingIndex];
       
+      console.log('Debug - Novo Mapeamento:', {
+        originalIndex: mappingIndex,
+        mappingKey,
+        isSocio1: this.formData.isSocio1,
+        currentStep: this.currentStep
+      });
+
       const mappings = {
         1: {
           nome: 'customfield_shorttext48',
@@ -403,12 +383,16 @@ export default {
         }
       };
 
-      const mapping = mappings[adjustedIndex];
+      // Limpa TODOS os campos do sócio atual antes de mapear
+      this.cleanPartnerFields(mappingKey);
+
+      const mapping = mappings[mappingKey];
       if (!mapping) {
-        console.error('Mapping não encontrado para índice:', adjustedIndex);
+        console.error('Mapping não encontrado para índice:', mappingKey);
         return data;
       }
 
+      // Cria um novo objeto com os dados mapeados
       const result = {};
       Object.entries(data).forEach(([key, value]) => {
         if (mapping[key]) {
@@ -416,7 +400,7 @@ export default {
         }
       });
 
-      console.log('Dados mapeados para sócio:', result);
+      console.log('Dados mapeados para sócio:', mappingKey, result);
       return result;
     },
     getPartnerMapping(index) {
@@ -442,7 +426,6 @@ export default {
       return mappings[index] || {};
     },
     cleanPartnerFields(currentIndex) {
-      // Arrays com todos os prefixos de campos para cada sócio
       const partnerPrefixes = {
         1: ['customfield_shorttext48', 'customfield_shorttext60', 'customfield_shorttext52', 
             'customfield_shorttext40', 'customfield_date5', 'customfield_file10', 
@@ -465,20 +448,30 @@ export default {
       const fieldsToClean = partnerPrefixes[currentIndex] || [];
       fieldsToClean.forEach(field => {
         if (this.formData[field]) {
-          delete this.formData[field];
+          this.$delete 
+            ? this.$delete(this.formData, field)
+            : delete this.formData[field];
         }
       });
 
-      // Limpa também os campos temporários
-      const tempFields = ['nome', 'cpf', 'email', 'telefone', 'dataNascimento', 
-                         'cep', 'endereco', 'numero', 'complemento', 'bairro', 
-                         'cidade', 'uf', 'pais', 'antecedentes'];
-      
-      tempFields.forEach(field => {
-        if (this.formData[field]) {
-          delete this.formData[field];
-        }
-      });
+      // Força a atualização do Vue
+      this.formData = { ...this.formData };
+    },
+    resetSociosCache() {
+      this.sociosCache = {};
+    },
+    resetForm() {
+      this.currentStep = 0;
+      this.formData = {};
+      this.errorMessage = '';
+      this.successMessage = '';
+      fileUploadManager.clear();
+      this.setupStepsBasedOnPartners(0);
+    },
+    async submitForm() {
+      // Implemente a lógica para enviar o formulário
+      // ...
+      return { success: true };
     }
   },
   watch: {
