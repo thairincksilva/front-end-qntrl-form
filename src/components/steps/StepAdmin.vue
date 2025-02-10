@@ -11,7 +11,6 @@
           type="text"
           v-model="localData.nome"
           class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-          required
           :placeholder="`Digite o nome do Sócio ${displayNumber}`"
         />
       </label>
@@ -23,7 +22,6 @@
           type="email"
           v-model="localData.email"
           class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-          required
           :placeholder="`Digite o email do Sócio ${displayNumber}`"
         />
       </label>
@@ -36,7 +34,6 @@
           type="text"
           v-model="localData.cpf"
           class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-          required
           :placeholder="`Digite o CPF do Sócio ${displayNumber}`"
         />
       </label>
@@ -49,7 +46,6 @@
           ref="birthDatePicker"
           v-model="localData.dataNascimento"
           class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-          required
           placeholder="Selecione a data"
         />
       </label>
@@ -248,10 +244,8 @@ export default {
   },
   computed: {
     displayNumber() {
-      // Se tem sócio solicitante (hasFirstPartner), 
-      // o número de exibição será o índice atual
-      // Não soma mais 1 ao índice
-      return this.hasFirstPartner ? this.index : this.index + 1;
+      // Se tem sócio solicitante, começa do 1
+      return this.hasFirstPartner ? this.index + 1 : this.index + 1;
     }
   },
   created() {

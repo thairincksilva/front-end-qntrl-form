@@ -30,11 +30,7 @@ import StepAdmin from "../components/steps/StepAdmin.vue";
 import StepDocuments from "../components/steps/StepDocuments.vue";
 import StepTriagem from "../components/steps/StepTriagem.vue";
 import api from "../services/api";
-import { formatDate, formatPhone, formatDateBR } from "../utils/formatters";
-import { handleFileUpload } from "../utils/fileHandlers";
-import axios from "axios";
 import { fileUploadManager } from "../utils/fileUploadManager";
-import Swal from "sweetalert2";
 
 export default {
   name: "MultiStepForm",
@@ -177,12 +173,11 @@ export default {
 
       try {
         const formData = new FormData();
-        const fieldsToExclude = ["priority", "description", "layout_id", "isSocio1", "numberOfPartners", "totalPartners"];
+        const fieldsToExclude = ["description", "isSocio1", "numberOfPartners", "totalPartners"];
 
         formData.append("title", this.formData.customfield_shorttext17 || "Nova Solicitação");
-        formData.append("priority", "33662000000000289");
+        formData.append("priority", "33662000000000287");
         formData.append("description", this.formData.description || "");
-        formData.append("layout_id", "33662000000053045");
 
         Object.entries(this.formData).forEach(([key, value]) => {
           if (fieldsToExclude.includes(key)) {
@@ -235,20 +230,20 @@ export default {
         { title: "Empresa", component: StepCompany }
       ];
 
+      // Se tem sócio solicitante, limita a 3 sócios adicionais
       const maxSocios = this.formData.isSocio1 ? 3 : 4;
       const sociosParaAdicionar = Math.min(numberOfPartners, maxSocios);
 
       for (let i = 0; i < sociosParaAdicionar; i++) {
-        const displayNumber = i + 1;
+        const displayNumber = this.formData.isSocio1 ? i + 2 : i + 1;
         baseSteps.push({
           title: `Sócio ${displayNumber}`,
           component: StepAdmin,
-          index: this.formData.isSocio1 ? i + 1 : i
+          index: i
         });
       }
 
       baseSteps.push({ title: "Documentos", component: StepDocuments });
-
       this.steps = baseSteps;
     },
     mapStepDataToFields(data, index) {
@@ -316,14 +311,17 @@ export default {
       }
     },
     mapSocioFields(data, mappingIndex) {
-      // Define o mapeamento direto baseado no índice do sócio
-      const socioMapping = {
-        0: this.formData.isSocio1 ? 1 : 1, // Primeiro sócio adicional
-        1: this.formData.isSocio1 ? 2 : 2, // Segundo sócio adicional
-        2: this.formData.isSocio1 ? 3 : 3  // Terceiro sócio adicional
+      // Ajusta o índice de mapeamento baseado no sócio solicitante
+      const adjustedIndex = this.formData.isSocio1 ? mappingIndex + 1 : mappingIndex;
+      
+      const mappings = {
+        0: this.formData.isSocio1 ? 1 : 0, // Primeiro sócio adicional
+        1: this.formData.isSocio1 ? 2 : 1, // Segundo sócio adicional
+        2: this.formData.isSocio1 ? 3 : 2, // Terceiro sócio adicional
+        3: 3 // Quarto sócio (apenas quando não há sócio solicitante)
       };
 
-      const mappingKey = socioMapping[mappingIndex];
+      const mappingKey = mappings[adjustedIndex];
       
       console.log('Debug - Novo Mapeamento:', {
         originalIndex: mappingIndex,
@@ -331,57 +329,6 @@ export default {
         isSocio1: this.formData.isSocio1,
         currentStep: this.currentStep
       });
-
-      const mappings = {
-        1: {
-          nome: 'customfield_shorttext48',
-          cpf: 'customfield_shorttext60',
-          email: 'customfield_shorttext52',
-          telefone: 'customfield_shorttext40',
-          dataNascimento: 'customfield_date5',
-          antecedentes: 'customfield_file10',
-          cep: 'customfield_shorttext55',
-          endereco: 'customfield_shorttext42',
-          numero: 'customfield_shorttext57',
-          complemento: 'customfield_shorttext49',
-          bairro: 'customfield_shorttext58',
-          cidade: 'customfield_shorttext46',
-          uf: 'customfield_shorttext59',
-          pais: 'customfield_shorttext53'
-        },
-        2: {
-          nome: 'customfield_shorttext51',
-          cpf: 'customfield_shorttext31',
-          email: 'customfield_shorttext56',
-          telefone: 'customfield_shorttext35',
-          dataNascimento: 'customfield_date3',
-          antecedentes: 'customfield_file9',
-          cep: 'customfield_shorttext25',
-          endereco: 'customfield_shorttext38',
-          numero: 'customfield_shorttext30',
-          complemento: 'customfield_shorttext37',
-          bairro: 'customfield_shorttext28',
-          cidade: 'customfield_shorttext39',
-          uf: 'customfield_shorttext33',
-          pais: 'customfield_shorttext41'
-        },
-        3: {
-          nome: 'customfield_shorttext44',
-          cpf: 'customfield_shorttext27',
-          email: 'customfield_shorttext43',
-          telefone: 'customfield_shorttext26',
-          dataNascimento: 'customfield_date4',
-          antecedentes: 'customfield_file8',
-          cep: 'customfield_shorttext45',
-          endereco: 'customfield_shorttext29',
-          numero: 'customfield_shorttext50',
-          complemento: 'customfield_shorttext34',
-          bairro: 'customfield_shorttext47',
-          cidade: 'customfield_shorttext32',
-          uf: 'customfield_shorttext54',
-          pais: 'customfield_shorttext36'
-        }
-      };
 
       // Limpa TODOS os campos do sócio atual antes de mapear
       this.cleanPartnerFields(mappingKey);

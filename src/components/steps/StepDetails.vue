@@ -44,7 +44,6 @@
             type="text"
             v-model="localData.nomeCompleto"
             class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-            required
             placeholder="Digite seu nome completo"
           />
         </label>
@@ -56,7 +55,6 @@
             v-model="localData.telefone"
             v-mask="'(XX) XXXXX-XXXX'"
             class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-            required
             placeholder="(00) 00000-0000"
           />
         </label>
@@ -67,7 +65,6 @@
             type="email"
             v-model="localData.email"
             class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-            required
             placeholder="Digite seu e-mail"
           />
         </label>
@@ -80,7 +77,6 @@
               type="text"
               v-model="localData.rg"
               class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-              required
               placeholder="Digite seu RG"
             />
           </label>
@@ -92,7 +88,6 @@
               v-model="localData.cpf"
               v-mask="'XXX.XXX.XXX-XX'"
               class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-              required
               placeholder="000.000.000-00"
             />
           </label>
@@ -105,7 +100,6 @@
               v-model="localData.cep"
               v-mask="'XXX.XXX.XXX-XX'"
               class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-              required
               placeholder="00000-000"
             />
           </label>
@@ -117,7 +111,6 @@
               type="text"
               v-model="localData.endereco"
               class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-              required
               placeholder="Digite o endereço"
             />
           </label>
@@ -129,7 +122,6 @@
               type="text"
               v-model="localData.numero"
               class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-              required
               placeholder="Digite o número"
             />
           </label>
@@ -152,7 +144,6 @@
               type="text"
               v-model="localData.bairro"
               class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-              required
               placeholder="Digite o bairro"
             />
           </label>
@@ -164,7 +155,6 @@
               type="text"
               v-model="localData.cidade"
               class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-              required
               placeholder="Digite a cidade"
             />
           </label>
@@ -187,7 +177,6 @@
               type="text"
               v-model="localData.pais"
               class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-              required
               placeholder="Digite o país"
             />
           </label>
@@ -199,7 +188,6 @@
               type="text"
               v-model="localData.dataNascimento"
               class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-              required
               placeholder="Selecione a data"
               readonly
             />
@@ -283,9 +271,9 @@ export default {
         onChange: (selectedDates) => {
           if (selectedDates[0]) {
             const date = selectedDates[0];
-            this.localData.dataNascimento = date.toISOString().split('T')[0] + 'T10:45:00-0300';
+            this.localData.dataNascimento = date.toISOString().split("T")[0] + "T10:45:00-0300";
           }
-        }
+        },
       });
     }
   },
@@ -300,9 +288,9 @@ export default {
             onChange: (selectedDates) => {
               if (selectedDates[0]) {
                 const date = selectedDates[0];
-                this.localData.dataNascimento = date.toISOString().split('T')[0] + 'T10:45:00-0300';
+                this.localData.dataNascimento = date.toISOString().split("T")[0] + "T10:45:00-0300";
               }
-            }
+            },
           });
         });
       }
@@ -347,53 +335,52 @@ export default {
   methods: {
     handleNext() {
       const isSocio = this.localData.isResponsible && this.localData.isPartner;
-      
+
       // Formata a data antes de enviar
       const formattedData = {
         ...this.localData,
-        dataNascimento: this.localData.dataNascimento ? 
-          this.localData.dataNascimento.split('T')[0] + 'T10:45:00-0300' : '',
+        dataNascimento: this.localData.dataNascimento ? this.localData.dataNascimento.split("T")[0] + "T10:45:00-0300" : "",
         isResponsible: this.localData.isResponsible,
         isPartner: this.localData.isPartner,
-        isSocio1: isSocio
+        isSocio1: isSocio,
       };
 
-      console.log('StepDetails - Dados formatados:', formattedData);
-      this.$emit('next', formattedData);
+      console.log("StepDetails - Dados formatados:", formattedData);
+      this.$emit("next", formattedData);
     },
     mapFields(data) {
-      console.log('StepDetails - Dados recebidos:', data);
-      
+      console.log("StepDetails - Dados recebidos:", data);
+
       // Se for sócio, mapeia direto como sócio 1
       if (data.isResponsible && data.isPartner) {
         const mappedData = {
           isSocio1: true,
           customfield_integer2: "1",
-          customfield_shorttext21: data.nomeCompleto || '',
-          customfield_shorttext22: data.cpf || '',
-          customfield_shorttext14: data.email || '',
-          customfield_shorttext13: data.telefone || '',
-          customfield_date1: data.dataNascimento ? data.dataNascimento + 'T10:45:00-0300' : '',
+          customfield_shorttext21: data.nomeCompleto || "",
+          customfield_shorttext22: data.cpf || "",
+          customfield_shorttext14: data.email || "",
+          customfield_shorttext13: data.telefone || "",
+          customfield_date1: data.dataNascimento ? data.dataNascimento + "T10:45:00-0300" : "",
           customfield_file4: data.antecedentes || null,
-          customfield_shorttext2: data.cep || '',
-          customfield_shorttext4: data.endereco || '',
-          customfield_shorttext3: data.numero || '',
-          customfield_shorttext12: data.complemento || '',
-          customfield_shorttext5: data.bairro || '',
-          customfield_shorttext8: data.cidade || '',
-          customfield_shorttext7: data.uf || '',
-          customfield_shorttext10: data.pais || ''
+          customfield_shorttext2: data.cep || "",
+          customfield_shorttext4: data.endereco || "",
+          customfield_shorttext3: data.numero || "",
+          customfield_shorttext12: data.complemento || "",
+          customfield_shorttext5: data.bairro || "",
+          customfield_shorttext8: data.cidade || "",
+          customfield_shorttext7: data.uf || "",
+          customfield_shorttext10: data.pais || "",
         };
-        console.log('StepDetails - Mapeado como sócio 1:', mappedData);
+        console.log("StepDetails - Mapeado como sócio 1:", mappedData);
         return mappedData;
       }
 
       // Se não for sócio, retorna dados temporários
       const tempData = {
         isSocio1: false,
-        ...data
+        ...data,
       };
-      console.log('StepDetails - Dados temporários:', tempData);
+      console.log("StepDetails - Dados temporários:", tempData);
       return tempData;
     },
     formatDate(dateString) {

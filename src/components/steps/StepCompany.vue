@@ -10,7 +10,6 @@
           type="text"
           v-model="localData.cnpj"
           class="w-full px-4 py-3 rounded-[0.75rem] border-gray-300 bg-white shadow-sm hover:border-gray-400 focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 focus:ring-opacity-50 transition-all duration-200 font-inter placeholder-gray-400"
-          required
           placeholder="Digite o CNPJ"
         />
       </label>
@@ -42,8 +41,7 @@
         <input 
           type="text" 
           v-model="localData.razaoSocial" 
-          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400"
-          required 
+          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30 shadow-sm hover:bg-white focus:bg-white focus:border-[#991B1B] focus:ring-[#991B1B] focus:ring-2 transition-all duration-300 font-inter placeholder-gray-400" 
           placeholder="Digite a razão social" 
         />
       </label>
@@ -197,26 +195,29 @@
       <!-- Quantidade de Sócios -->
       <label class="block text-sm font-medium text-gray-700 mb-2 font-inter">
         Quantidade de Sócios:
-        <select 
+        <select
           v-model="localData.numberOfPartners"
-          class="mt-1 w-full px-5 py-2.5 rounded-xl border border-gray-200 bg-gray-50/30"
-          required
+          class="w-full px-4 py-3 rounded-[0.75rem] border-gray-300 bg-white shadow-sm"
         >
           <option value="">Selecione</option>
-          <option 
-            v-for="n in availablePartnerOptions" 
-            :key="n" 
-            :value="n"
-          >
-            {{ n }} {{ n === 1 ? 'Sócio' : 'Sócios' }}
-          </option>
+          <template v-if="hasFirstPartner">
+            <option value="1">1 Sócio</option>
+            <option value="2">2 Sócios</option>
+            <option value="3">3 Sócios</option>
+          </template>
+          <template v-else>
+            <option value="1">1 Sócio</option>
+            <option value="2">2 Sócios</option>
+            <option value="3">3 Sócios</option>
+            <option value="4">4 Sócios</option>
+          </template>
         </select>
       </label>
 
       <!-- Botões -->
       <div class="flex justify-between pt-4">
         <button 
-          type="button" 
+          type="button"
           class="bg-gray-100 text-gray-700 hover:bg-gray-200 px-8 py-2.5 rounded-xl font-medium transition-all duration-300 font-inter hover:shadow-lg"
           @click="$emit('prev')"
         >
@@ -342,24 +343,32 @@ export default {
       });
     },
     mapFields(data) {
-      return {
-        customfield_shorttext20: data.cnpj || '',
-        customfield_shorttext17: data.razaoSocial || '',
-        customfield_shorttext1: data.nomeFantasia || '',
-        customfield_shorttext19: data.email || '',
-        customfield_longtext1: data.atividadePrincipal || '',
-        customfield_shorttext16: data.telefone || '',
-        customfield_date2: data.dataAbertura || '',
-        customfield_shorttext18: data.cep || '',
-        customfield_shorttext23: data.endereco || '',
-        customfield_integer1: data.numero || '',
-        customfield_shorttext15: data.complemento || '',
-        customfield_shorttext11: data.bairro || '',
-        customfield_shorttext24: data.cidade || '',
-        customfield_shorttext6: data.uf || '',
-        customfield_shorttext9: data.pais || '',
-        customfield_file7: data.cartaoCnpj || null
-      };
+      console.log('StepAdmin - Index:', this.index);
+      console.log('StepAdmin - É sócio 1?', this.formData.isSocio1);
+      
+      // Se tiver sócio solicitante, ajusta o índice de mapeamento
+      const mappingIndex = this.hasFirstPartner ? this.index + 1 : this.index;
+      console.log('StepAdmin - Índice para mapping:', mappingIndex);
+
+      const mappings = [
+        // ... seus mappings existentes ...
+      ];
+
+      const mapping = mappings[mappingIndex];
+      if (!mapping) {
+        console.error('Mapping não encontrado para índice:', mappingIndex);
+        return data;
+      }
+
+      const result = {};
+      Object.entries(data).forEach(([key, value]) => {
+        if (mapping[key]) {
+          result[mapping[key]] = value;
+        }
+      });
+
+      console.log('Dados mapeados para sócio:', result);
+      return result;
     },
     handleFileUpload(event) {
       const file = event.target.files[0];
@@ -367,6 +376,29 @@ export default {
         this.selectedFileName = file.name;
         this.localData.cartaoCnpj = file;
       }
+    },
+    setupStepsBasedOnPartners(numberOfPartners) {
+      const baseSteps = [
+        { title: "Início", component: StepTriagem },
+        { title: "Detalhes", component: StepDetails },
+        { title: "Empresa", component: StepCompany }
+      ];
+
+      // Se tem sócio solicitante, limita a 3 sócios adicionais
+      const maxSocios = this.formData.isSocio1 ? 3 : 4;
+      const sociosParaAdicionar = Math.min(numberOfPartners, maxSocios);
+
+      for (let i = 0; i < sociosParaAdicionar; i++) {
+        const displayNumber = i + 1;
+        baseSteps.push({
+          title: `Sócio ${displayNumber}`,
+          component: StepAdmin,
+          index: i
+        });
+      }
+
+      baseSteps.push({ title: "Documentos", component: StepDocuments });
+      this.steps = baseSteps;
     }
   }
 }
