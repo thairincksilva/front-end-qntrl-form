@@ -29,8 +29,10 @@ import StepCompany from "../components/steps/StepCompany.vue";
 import StepAdmin from "../components/steps/StepAdmin.vue";
 import StepDocuments from "../components/steps/StepDocuments.vue";
 import StepTriagem from "../components/steps/StepTriagem.vue";
+import StepSummary from '../components/steps/StepSummary.vue'
 import api from "../services/api";
 import { fileUploadManager } from "../utils/fileUploadManager";
+import { markRaw } from 'vue'
 
 export default {
   name: "MultiStepForm",
@@ -40,7 +42,8 @@ export default {
     StepCompany,
     StepAdmin,
     StepDocuments,
-    StepTriagem
+    StepTriagem,
+    StepSummary
   },
   data() {
     return {
@@ -48,10 +51,30 @@ export default {
       socioCount: 1,
       isSubmitting: false,
       steps: [
-        { title: "Início", component: StepTriagem },
-        { title: "Detalhes", component: StepDetails },
-        { title: "Empresa", component: StepCompany },
-        { title: "Documentos", component: StepDocuments }
+        {
+          component: 'StepTriagem',
+          title: 'Triagem'
+        },
+        {
+          component: 'StepDetails',
+          title: 'Dados do Solicitante'
+        },
+        {
+          component: 'StepAdmin',
+          title: 'Sócios Assinantes'
+        },
+        {
+          component: 'StepCompany',
+          title: 'Dados da Empresa'
+        },
+        {
+          component: 'StepDocuments',
+          title: 'Documentos'
+        },
+        {
+          component: 'StepSummary',
+          title: 'Resumo'
+        }
       ],
       errorMessage: "",
       successMessage: "",
@@ -66,7 +89,12 @@ export default {
         description: '',
         record_owner: '',
         duedate: '',
-        priority: ''
+        priority: '',
+        solicitante: {
+          cnpj: '',
+          nome: '',
+          email: '',
+        }
       },
       tempUserData: null,
       sociosCache: {}
@@ -76,6 +104,7 @@ export default {
     currentStepProps() {
       return {
         formData: this.formData,
+        cnpjData: this.formData.cnpjData,
         hasFirstPartner: this.formData.isSocio1,
         index: this.currentStep >= 2 && this.currentStep < this.steps.length - 2 ? 
           this.currentStep - 2 : null
@@ -116,51 +145,63 @@ export default {
     },
   },
   methods: {
-    handleNextStep(data) {
-      console.log('Dados recebidos:', data);
+    handleNextStep(stepData) {
+      // Garantir que as datas mantenham o formato ao serem combinadas no formData
+      const processedData = { ...stepData };
       
-      if (this.currentStep === 1) { // StepDetails
-        if (data.isResponsible && data.isPartner) {
-          this.formData.isSocio1 = true;
-          const mappedData = this.mapStepDataToFields(data);
-          this.formData = { ...this.formData, ...mappedData };
-        } else {
-          this.formData.isSocio1 = false;
-          this.tempDetailsData = data;
+      // Lista de campos de data para verificar
+      const dateFields = ['customfield_date1', 'customfield_date2', 'customfield_date3', 'customfield_date4', 'customfield_date5'];
+      
+      dateFields.forEach(field => {
+        if (processedData[field] && !processedData[field].includes('T10:45:00-0300')) {
+          processedData[field] = processedData[field] + 'T10:45:00-0300';
+        }
+      });
+
+      this.formData = {
+        ...this.formData,
+        ...processedData,
+        solicitante: {
+          ...this.formData.solicitante,
+          ...(stepData.solicitante || {})
+        }
+      };
+
+      // Log detalhado do estado atual do formulário
+      console.group(`Dados do formulário após etapa ${this.currentStep + 1}`);
+      console.log('Nome do componente atual:', this.steps[this.currentStep].component?.name);
+      console.log('Dados recebidos do componente:', stepData);
+      console.log('Estado atual completo do formulário:', JSON.stringify(this.formData, null, 2));
+      console.groupEnd();
+      
+      if (this.currentStep < this.steps.length - 1) {
+        // Verifica se o componente atual é StepCompany
+        const currentComponent = this.steps[this.currentStep].component;
+        if (currentComponent?.name === 'StepCompany') {
+          // Encontra o índice do StepDocuments
+          const documentsIndex = this.steps.findIndex(step => step.component?.name === 'StepDocuments');
+          if (documentsIndex !== -1) {
+            this.currentStep = documentsIndex;
+            return;
+          }
         }
         this.currentStep++;
-        return;
       }
-
-      if (this.currentStep === 2) { // StepCompany
-        const numberOfPartners = parseInt(data.numberOfPartners);
-        this.setupStepsBasedOnPartners(numberOfPartners);
-        this.formData = { ...this.formData, ...data };
-        this.currentStep++;
-        return;
-      }
-
-      if (this.currentStep >= 3 && this.currentStep < this.steps.length - 2) {
-        const socioIndex = this.currentStep - 3;
-        const mappedData = this.mapSocioFields(data, socioIndex);
-        
-        // Limpa os dados dos próximos sócios
-        const nextIndex = socioIndex + 1;
-        for (let i = nextIndex; i <= 3; i++) {
-          this.cleanPartnerFields(i);
-        }
-        
-        this.formData = { ...this.formData, ...mappedData };
-        this.currentStep++;
-        return;
-      }
-
-      const mappedData = this.mapStepDataToFields(data);
-      this.formData = { ...this.formData, ...mappedData };
-      this.currentStep++;
     },
-    handlePreviousStep() {
+    handlePreviousStep(data) {
       if (this.currentStep > 0) {
+        // Se estiver no StepDocuments e vier do StepCompany
+        if (
+          this.steps[this.currentStep].component?.name === 'StepDocuments' &&
+          data?.fromComponent === 'StepCompany'
+        ) {
+          // Encontra o índice do StepCompany
+          const companyIndex = this.steps.findIndex(step => step.component?.name === 'StepCompany');
+          if (companyIndex !== -1) {
+            this.currentStep = companyIndex;
+            return;
+          }
+        }
         this.currentStep--;
       }
     },
@@ -173,7 +214,17 @@ export default {
 
       try {
         const formData = new FormData();
-        const fieldsToExclude = ["description", "isSocio1", "numberOfPartners", "totalPartners"];
+        const fieldsToExclude = [
+          "description",
+          "isSocio1", 
+          "numberOfPartners", 
+          "totalPartners",
+          "tipoAssinatura",
+          "quantidadeSocios",
+          "isResponsible",
+          "isSocioAdmin",
+          "solicitante"
+        ];
 
         formData.append("title", this.formData.customfield_shorttext17 || "Nova Solicitação");
         formData.append("priority", "33662000000000287");
@@ -226,7 +277,8 @@ export default {
     setupStepsBasedOnPartners(numberOfPartners) {
       const baseSteps = [
         { title: "Início", component: StepTriagem },
-        { title: "Detalhes", component: StepDetails },
+        { title: "Solicitante", component: StepDetails },
+        { title: "Sócios", component: StepAdmin },
         { title: "Empresa", component: StepCompany }
       ];
 

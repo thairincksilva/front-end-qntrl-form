@@ -181,7 +181,7 @@
         <button
           type="button"
           class="bg-gray-100 text-gray-700 hover:bg-gray-200 px-8 py-2.5 rounded-xl font-medium transition-all duration-300 font-inter hover:shadow-lg"
-          @click="$emit('prev')"
+          @click="handlePrev"
         >
           Voltar
         </button>
@@ -318,6 +318,9 @@ export default {
       } finally {
         this.isSubmitting = false;
       }
+    },
+    handlePrev() {
+      this.$emit('prev', { fromComponent: 'StepCompany' });
     },
   },
   created() {
